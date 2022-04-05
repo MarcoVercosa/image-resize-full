@@ -4,8 +4,8 @@ import mergeImagesV2 from 'merge-images-v2'
 
 export async function IdentificaDimensoesImagem(imagem) {
     console.log(imagem)
-    let resultado = await ImagemParaBlob(imagem)
-    let resultadobase64 = await blobToBase64(resultado)
+    // let resultado = await ImagemParaBlob(imagem)
+    // let resultadobase64 = await blobToBase64(resultado)
 
 
 
@@ -33,21 +33,6 @@ export async function IdentificaDimensoesImagem(imagem) {
     };
     reader.readAsDataURL(imagem.target.files[0]);
 
-    // const img = new Image();
-    // img.src = imagem;
-
-    // img.onload = () => {
-    //     // setImageDimensions({
-    //     //   height: img.height,
-    //     //   width: img.width
-    //     // });
-    //     console.log(img.height)
-    //     console.log(img.width)
-    // };
-    // img.onerror = (err) => {
-    //     console.log("img error");
-    //     console.error(err);
-    // };
 
 }
 
