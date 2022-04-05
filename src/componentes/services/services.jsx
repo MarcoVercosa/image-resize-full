@@ -3,37 +3,34 @@ import mergeImagesV2 from 'merge-images-v2'
 
 
 export async function IdentificaDimensoesImagem(imagem) {
-    console.log(imagem)
-    // let resultado = await ImagemParaBlob(imagem)
-    // let resultadobase64 = await blobToBase64(resultado)
+    //console.log(imagem.target.files[0])
+    const promise = new Promise((resolve) => {
+        var reader = new FileReader();
+        //Read the contents of Image File.
+        reader.onload = function (e) {
 
-
-
-    var reader = new FileReader();
-    //Read the contents of Image File.
-    reader.onload = function (e) {
-        console.log(e.target.result)
-        //Initiate the JavaScript Image object.
-        var image = new Image();
-        //Validate the File Height and Width.
-        image.onload = function () {
-            var height = this.height;
-            var width = this.width;
-            console.log(height, width)
-            if (height > 100 || width > 100) {
-                alert("Height and Width must not exceed 100px.");
-                return false;
-            }
-            alert("Uploaded image has valid Height and Width.");
-            return true;
+            //Initiate the JavaScript Image object.
+            var image = new Image();
+            //Validate the File Height and Width.
+            image.onload = function () {
+                var height = this.height;
+                var width = this.width;
+                resolve({ width, height })
+            };
+            //Set the Base64 string return from FileReader as source.
+            image.src = e.target.result;
+            image.onerror = function (e) { console.log("Image failed!"); };
         };
-        //Set the Base64 string return from FileReader as source.
-        image.src = e.target.result;
-        image.onerror = function (e) { console.log("Image failed!"); };
-    };
-    reader.readAsDataURL(imagem.target.files[0]);
+        reader.readAsDataURL(imagem);
+    })
+    return promise
+}
+export function MergeImagens(imagemMergeFinal, ImagemFrameRecebida) {
 
-
+    return new Promise((resolve) => {
+        mergeImagesV2([imagemMergeFinal, ImagemFrameRecebida])
+            .then(b64 => resolve(b64))
+    })
 }
 
 export async function BlobParaBase64(imagemBlob) { // imagem blob

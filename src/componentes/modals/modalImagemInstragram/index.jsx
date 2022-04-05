@@ -19,7 +19,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { ModalInstragramFrame } from '../modalSelectFrameInstagram';
 import { ModalRecorteImagem } from '../modalRecorteImagem';
 import { Header, AspectoImagem, Menu, Mensagem, AdicionarEnviarBotoes, EdicaoImagem, FecharMenu } from "./style"
-import { BlobParaBase64, ImagemParaBlob, ImagemFileParaBase64, AlterarDimensaoImagem, MoverImagensEOpacidade, IdentificaDimensoesImagem } from '../../services/services';
+import { BlobParaBase64, ImagemParaBlob, ImagemFileParaBase64, AlterarDimensaoImagem, MoverImagensEOpacidade, IdentificaDimensoesImagem, MergeImagens } from '../../services/services';
 
 
 //import Resizer from "react-image-file-resizer";
@@ -39,8 +39,7 @@ function ModalInstragram({ open, OpenClose }) {
     const [openModalFrames, setOpenModalFrames] = useState(false)
     const [openMenu, setOpenMenu] = useState(false)
     const [openModalRecorte, setOpenModalRecorte] = useState(false)
-    const [aspecto, setAspecto] = useState({ width: 1080, height: 1080, nome: "Square - 1080x1080" })
-
+    const [aspecto, setAspecto] = useState({ width: 0, height: 0, nome: "Outros" })
     const [imagemFundoOriginal, setImagemFundoOriginal] = useState()
     const [imagemFundo, setImagemFundo] = useState()
     const [imagemFrameOriginal, setImagemFrameOriginal] = useState()
@@ -63,44 +62,44 @@ function ModalInstragram({ open, OpenClose }) {
         selecionado: "grayscale"
     })
 
-    function SalavrImagemRecortada(imagem) {
-        console.log("Recortou", imagem)
-        setImagemMergeFinal(imagem)
+    async function SalavrImagemRecortada(imagemRecortada) {
+
+        //if (!imagemFrameOriginal) {//se não houver frame add
+        fetch(imagemRecortada)
+            .then(res => res.blob())//transforma em blob
+            .then(blob => {
+                setImagemFundoOriginal(blob) // pega a imagem BLOB para a func Alterar Aspecto se basear na imagem recortada
+                const file = new File([blob], "File name", { type: "image/png" })//transforma em aquivo
+                //IdentificaDimensoesImagem(file).then(({ width, height }) => console.log(width, height)) //pega a nova dimenção e armazena
+                IdentificaDimensoesImagem(file).then(({ width, height }) => setAspecto({ width, height, nome: `Outros: ${width}x${height}px` })) //pega a nova dimenção e armazena
+
+            })
+        setImagemMergeFinal(imagemRecortada)//para ser renderizada a nova imagem recortada
     }
 
     function OpenModalFrameSelecionar() {
         setOpenModalFrames(!openModalFrames)
     }
     function OpenModalRecorte() {
-        if (!imagemFrameOriginal) {
-            alert("Selecione uma imagem e um frame primeiro")
-            return
-        }
+        // if (!imagemFrameOriginal) {
+        //     alert("Selecione uma imagem e um frame primeiro")
+        //     return
+        // }
         setOpenModalRecorte(!openModalRecorte)
     }
 
     async function AdicionaImagemFundo(event) {
-        console.log(event)
-        IdentificaDimensoesImagem(event)
-
-
+        let { width, height } = await IdentificaDimensoesImagem(event.target.files[0])
 
         try {
             setImagemFundoOriginal(event.target.files[0])
             //const image = await resizeFile(width, height, event.target.files[0]);
-            const imageBase64 = await ImagemFileParaBase64(aspecto.width, aspecto.height, event.target.files[0])
-            const image = await AlterarDimensaoImagem(aspecto.width, aspecto.height, imageBase64)
-            if (imagemFrame) {//se ja existir algum frame carregado, apenas atualize a imagem final com a nova imagem fundo
-                mergeImagesV2([image, imagemFrame]).then(b64 => {
-                    setImagemMergeOriginal(b64)
-                    setImagemMergeFinal(b64)
-                    setImagemFundo(image)
-                })
-                return
-            }
+            const imageBase64 = await ImagemFileParaBase64(width, height, event.target.files[0])
+            const image = await AlterarDimensaoImagem(width, height, imageBase64)
             setImagemMergeOriginal(image)
             setImagemFundo(image)
-            setImagemMergeFinal(image)
+            setImagemMergeFinal(image);
+            setAspecto({ width, height, nome: `Outros: ${width} - ${height}px` })
         } catch (err) {
             console.log(err);
         }
@@ -111,19 +110,15 @@ function ModalInstragram({ open, OpenClose }) {
         //     return
         // }
         setImagemFrameOriginal(imagem)
-        //const image = await resizeFile(1080, 1080, imagem);
         const imageBase64 = await ImagemFileParaBase64(aspecto.width, aspecto.height, imagem)
         const image = await AlterarDimensaoImagem(aspecto.width, aspecto.height, imageBase64)
         setImagemFrame(image)
-        MergeImagens(image)
+        //MergeImagens(image)
+        let resultado = await MergeImagens(imagemMergeFinal, image) // solicita o merge das 2 imagens
+        setImagemMergeOriginal(resultado)
+        setImagemMergeFinal(resultado)
     }
-    //assim que o frame for adicionado, a func AdicionaImagemFrame chamara esta funcão para merge as 2 imagens
-    function MergeImagens(ImagemFrameRecebida) {
-        mergeImagesV2([imagemMergeFinal, ImagemFrameRecebida]).then(b64 => {
-            setImagemMergeOriginal(b64)
-            setImagemMergeFinal(b64)
-        })
-    }
+
     async function AlteraAspecto(width, height, nomeAspecto) {
         // Para alterar aspecto, deve-se chechar se há primeiro algum frame,
         // Se não houver:
@@ -159,6 +154,9 @@ function ModalInstragram({ open, OpenClose }) {
         }
     };
     async function MovimentarImagem(value, propriedade) {
+        if (!imagemFrame) {
+            alert("Necessário selecionar o frame")
+        }
         setMovimentarImagem(prevState => { return { ...prevState, [propriedade]: Number(value) } })
         let dados = movimentarImagem
         dados = { ...dados, [propriedade]: Number(value) }
@@ -167,11 +165,19 @@ function ModalInstragram({ open, OpenClose }) {
         setImagemMergeFinal(resultado)
     }
 
+    async function AlterarDimensaoManual() {
+        // let data = aspecto
+        // data = { ...data, [propriedade]: Number(value) }
+        // data = { ...data, nome: `Outros - ${data.width} - ${data.height}px` }
+        // setAspecto(data)
+        let imagem = await AlterarDimensaoImagem(aspecto.width, aspecto.height, imagemMergeFinal)
+        setImagemMergeFinal(imagem)
+        console.log(aspecto)
+    }
+
     function Filtro(value, propriedade) {
         setFiltros(prevState => { return { ...prevState, [propriedade]: value, selecionado: propriedade } })
     }
-
-
     function Reset() {
         setImagemFrame("")
         setImagemFrameOriginal("")
@@ -201,7 +207,8 @@ function ModalInstragram({ open, OpenClose }) {
                     border: '2px solid #000',
                     boxShadow: "24",
                     borderRadius: 7,
-                    overflowX: "scroll"
+                    overflow: 'auto',
+
                 }}
             >
 
@@ -325,15 +332,24 @@ function ModalInstragram({ open, OpenClose }) {
                                     <MenuItem value={1}>1</MenuItem>
                                 </Select>
                             </FormControl>
-                            <p>PIXELS:</p>
+                            <p>PIXELS:
+                                <Button
+                                    style={{ backgroundColor: "#c13996", color: "white", marginLeft: "40%" }}
+                                    component="span"
+                                    onClick={() => { AlterarDimensaoManual() }}
+                                >
+                                    ALTERAR
+                                </Button>
+                            </p>
+
                             <div>
                                 <TextField
-                                    id="outlined-number" label="Largura IMAGEM" type="number" //value={movimentarImagem.XImagem}
-                                    onChange={(data) => MovimentarImagem(data.target.value, "XImagem")}
+                                    id="outlined-number" label="Largura IMAGEM" type="number" value={aspecto.width}
+                                    onChange={(data) => setAspecto(prevState => { return { ...prevState, width: Number(data.target.value), nome: `Outros: ${data.target.value} - ${prevState.height}px` } })}
                                 />
                                 <TextField
-                                    id="outlined-number" label="Altura IMAGEM" type="number" //value={movimentarImagem.XImagem}
-                                    onChange={(data) => MovimentarImagem(data.target.value, "XImagem")}
+                                    id="outlined-number" label="Altura IMAGEM" type="number" value={aspecto.height}
+                                    onChange={(data) => setAspecto(prevState => { return { ...prevState, height: Number(data.target.value), nome: `Outros: ${prevState.width} - ${data.target.value}px` } })}
                                 />
                             </div>
                             <div>
