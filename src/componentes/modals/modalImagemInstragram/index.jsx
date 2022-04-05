@@ -80,6 +80,7 @@ function ModalInstragram({ open, OpenClose }) {
     }
 
     async function AdicionaImagemFundo(event) {
+        console.log(event)
         IdentificaDimensoesImagem(event)
 
 

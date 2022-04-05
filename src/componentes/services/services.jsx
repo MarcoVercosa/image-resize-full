@@ -3,6 +3,7 @@ import mergeImagesV2 from 'merge-images-v2'
 
 
 export async function IdentificaDimensoesImagem(imagem) {
+    console.log(imagem)
     let resultado = await ImagemParaBlob(imagem)
     let resultadobase64 = await blobToBase64(resultado)
 
@@ -18,6 +19,7 @@ export async function IdentificaDimensoesImagem(imagem) {
         image.onload = function () {
             var height = this.height;
             var width = this.width;
+            console.log(height, width)
             if (height > 100 || width > 100) {
                 alert("Height and Width must not exceed 100px.");
                 return false;
@@ -29,7 +31,7 @@ export async function IdentificaDimensoesImagem(imagem) {
         image.src = e.target.result;
         image.onerror = function (e) { console.log("Image failed!"); };
     };
-    reader.readAsDataURL(resultado);
+    reader.readAsDataURL(imagem.target.files[0]);
 
     // const img = new Image();
     // img.src = imagem;
