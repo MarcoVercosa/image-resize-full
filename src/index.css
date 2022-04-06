@@ -6,14 +6,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  scrollbar-width: thin;
+  /* scrollbar-width: thin; */
   /* "auto" or "thin" */
-  scrollbar-color: blue orange;
+  /* scrollbar-color: blue orange; */
   /* scroll thumb and track */
 
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
@@ -21,7 +21,7 @@ body {
 ::-webkit-scrollbar-thumb:vertical {
   background-color: #c13996;
   border-radius: 20px;
-}
+} */
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

@@ -5,26 +5,6 @@ import { styled } from '@mui/material/styles';
 import Modal from '@mui/material/Modal';
 import { Header, ImagensFrame, AdicionarEnviarBotoes, EdicaoImagem } from "./style"
 
-import Frame1 from "../../../assets/images/frames/frame1.png"
-import Frame2 from "../../../assets/images/frames/frame2.png"
-import Frame3 from "../../../assets/images/frames/frame3.png"
-
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '70vw',
-    height: "80vh",
-    //heigth: "100px",
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    borderRadius: 7,
-    p: 4,
-
-
-};
 const Input = styled('input')({
     display: 'none',
 });
@@ -59,7 +39,6 @@ function ModalInstragramFrame({ open, OpenClose, FrameSelecionado }: IModalInstr
             aria-OpenClose="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
-            {/* <Box sx={style} > */}
             <div
 
                 style={{
@@ -108,6 +87,7 @@ function ModalInstragramFrame({ open, OpenClose, FrameSelecionado }: IModalInstr
                         </label>
                         <Button variant="contained" component="span"
                             onClick={() => EnviaFrameParaEdicao()}
+                            disabled={!imagemFrameSelecionado}
                         >
                             Enviar foto
                         </Button>
@@ -115,8 +95,6 @@ function ModalInstragramFrame({ open, OpenClose, FrameSelecionado }: IModalInstr
                 </AdicionarEnviarBotoes>
 
             </div>
-
-            {/* </Box> */}
         </Modal >
 
     );

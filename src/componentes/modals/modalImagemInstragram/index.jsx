@@ -11,31 +11,33 @@ import Select from '@mui/material/Select';
 import FormLabel from '@mui/material/FormLabel';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+import HeightIcon from '@mui/icons-material/Height';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Checkbox from '@mui/material/Checkbox';
+
+import ImageFilter from "react-image-filter"
+//let imageGrayscale = require('image-grayscale')
+import imageFilterCore from 'image-filter-core'
+import imageGrayscale from 'image-filter-grayscale'
 
 
 
 import { ModalInstragramFrame } from '../modalSelectFrameInstagram';
 import { ModalRecorteImagem } from '../modalRecorteImagem';
-import { Header, AspectoImagem, Menu, Mensagem, AdicionarEnviarBotoes, EdicaoImagem, FecharMenu } from "./style"
+import { Container, Header, AspectoImagem, Menu, Mensagem, AdicionarEnviarBotoes, EdicaoImagem, FecharMenu } from "./style"
 import { BlobParaBase64, ImagemParaBlob, ImagemFileParaBase64, AlterarDimensaoImagem, MoverImagensEOpacidade, IdentificaDimensoesImagem, MergeImagens } from '../../services/services';
+import { isConstructorDeclaration } from 'typescript';
 
-
-//import Resizer from "react-image-file-resizer";
-//import mergeImages from 'merge-images'
-import mergeImagesV2 from 'merge-images-v2'
-import { setOriginalNode } from 'typescript';
-//import { WebPhotoFilter } from 'web-photo-filter-react/dist';
-//import ImageFilter from 'react-image-filter';
-//import Cropper from 'react-easy-crop'
 
 
 const Input = styled('input')({
     display: 'none',
 });
 
-function ModalInstragram({ open, OpenClose }) {
+function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
+    // console.log(imageFilterCore)
+    // console.log(imageGrayscale)
     const [openModalFrames, setOpenModalFrames] = useState(false)
     const [openMenu, setOpenMenu] = useState(false)
     const [openModalRecorte, setOpenModalRecorte] = useState(false)
@@ -55,11 +57,11 @@ function ModalInstragram({ open, OpenClose }) {
         opacityImagem: 1
     })
     const [filtros, setFiltros] = useState({
-        duotone: false,
+        contraste: false,
         grayscale: false,
         sepia: false,
         invert: false,
-        selecionado: "grayscale"
+        blur: false
     })
 
     async function SalavrImagemRecortada(imagemRecortada) {
@@ -93,6 +95,7 @@ function ModalInstragram({ open, OpenClose }) {
 
         try {
             setImagemFundoOriginal(event.target.files[0])
+            console.log(event.target.files[0])
             //const image = await resizeFile(width, height, event.target.files[0]);
             const imageBase64 = await ImagemFileParaBase64(width, height, event.target.files[0])
             const image = await AlterarDimensaoImagem(width, height, imageBase64)
@@ -120,6 +123,11 @@ function ModalInstragram({ open, OpenClose }) {
     }
 
     async function AlteraAspecto(width, height, nomeAspecto) {
+
+        if (!imagemFundoOriginal) {
+            alert("Selecione primeiramente uma imagem")
+            return
+        }
         // Para alterar aspecto, deve-se chechar se há primeiro algum frame,
         // Se não houver:
         // Altera o aspecto apenas a imagem de fundo setOriginal
@@ -175,75 +183,118 @@ function ModalInstragram({ open, OpenClose }) {
         console.log(aspecto)
     }
 
-    function Filtro(value, propriedade) {
+    function Filtro(value, propriedade, valueFilter) {
         setFiltros(prevState => { return { ...prevState, [propriedade]: value, selecionado: propriedade } })
+        setImagemMergeOriginal(imagemMergeFinal) //armazena o estado original sem alterações na imagem
+
+        if (propriedade == "original") {
+            setImagemMergeFinal(imagemMergeOriginal)
+            return
+        }
+
+        var imgObj = document.getElementsByClassName('imagemFinal');
+        function gray(imgObj, filter) {
+            var canvas = document.createElement('canvas');
+            var canvasContext = canvas.getContext('2d');
+
+            var imgW = imgObj[0].width;
+            var imgH = imgObj[0].height;
+            canvas.width = imgW;
+            canvas.height = imgH;
+
+            canvasContext.filter = "contrast(10)";
+            canvasContext.drawImage(imgObj[0], 0, 0, imgObj[0].width, imgObj[0].height)
+            console.log(canvas.toDataURL())
+            setImagemMergeFinal(canvas.toDataURL())
+        }
+        imgObj.src = gray(imgObj);
+
+
+
+    }
+    function FecharModalEdicao() {
+        var resposta = (window.confirm("Deseja realmente sair ? "))
+        if (resposta) {
+            setOpenMenu(false)
+            Reset()
+            OpenClose()
+        }
+        return
     }
     function Reset() {
-        setImagemFrame("")
-        setImagemFrameOriginal("")
-        setImagemFundo("")
-        setImagemFundoOriginal("")
-        setImagemMergeFinal("")
-        setImagemMergeOriginal("")
+        var resposta = (window.confirm("As alterações serão desfeitas. Confirma  ?"))
+        if (resposta) {
+            setImagemFrame("")
+            setImagemFrameOriginal("")
+            setImagemFundo("")
+            setImagemFundoOriginal("")
+            setImagemMergeFinal("")
+            setImagemMergeOriginal("")
+            setOpenMenu(false)
+        }
+        return
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     return (
 
         <Modal
             open={open}
-            onClose={OpenClose}
+            onClose={FecharModalEdicao}
             aria-OpenClose="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
-            <div
-
-                style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: 'translate(-50%, -50%)',
-                    width: '90vw',
-                    height: "90vh",
-                    backgroundColor: "white",
-                    border: '2px solid #000',
-                    boxShadow: "24",
-                    borderRadius: 7,
-                    overflow: 'auto',
-
-                }}
+            <Container temaRedeSocial={temaRedeSocial}
             >
-
-                <Header>
+                <Header temaRedeSocial={temaRedeSocial}>
                     <div>
                         <h1>Editar foto</h1>
                         <Button
                             //variant="outlined" 
-                            style={{ backgroundColor: openMenu ? "#c13996" : "#b5afa7", color: "white" }}
+                            style={{ backgroundColor: openMenu ? temaRedeSocial : "#b5afa7", color: "white", height: "50px" }}
                             component="span" size='small'
                             onClick={() => setOpenMenu(!openMenu)}
+                            disabled={!imagemFundo}
+
                         >
                             Menu
                         </Button>
                     </div>
                 </Header>
 
-                <AspectoImagem>
+                <AspectoImagem temaRedeSocial={temaRedeSocial}>
                     <p>Selecione o aspecto: {aspecto.nome}</p>
                     <div>
-                        <Button style={{ backgroundColor: aspecto.nome == "Horizontal - 1080x608" ? "#c13996" : "#b5afa7", color: "white" }}
+                        <Button style={{ backgroundColor: aspecto.nome == "Horizontal - 1080x608" ? temaRedeSocial : "#b5afa7", color: "white" }}
                             //variant={aspecto.nome == "Horizontal - 1080x608" ? "contained" : "outlined"}
                             onClick={() => AlteraAspecto(1080, 608, "Horizontal - 1080x608")}
                         >1.91:1 - Horizontal</Button>
-                        <Button style={{ backgroundColor: aspecto.nome == "Square - 1080x1080" ? "#c13996" : "#b5afa7", color: "white" }}
+                        <Button style={{ backgroundColor: aspecto.nome == "Square - 1080x1080" ? temaRedeSocial : "#b5afa7", color: "white" }}
                             //variant={aspecto.nome == "Square - 1080x1080" ? "contained" : "outlined"}
                             onClick={() => AlteraAspecto(1080, 1080, "Square - 1080x1080")}
                         >1:1 - Square</Button>
                         <Button
-                            style={{ backgroundColor: aspecto.nome == "Vertical - 1080x1350" ? "#c13996" : "#b5afa7", color: "white" }}
+                            style={{ backgroundColor: aspecto.nome == "Vertical - 1080x1350" ? temaRedeSocial : "#b5afa7", color: "white" }}
                             //variant={aspecto.nome == "Vertical - 1080x1350" ? "contained" : "outlined"}
                             onClick={() => AlteraAspecto(1080, 1350, "Vertical - 1080x1350")}
                         >4:5 - Vertical</Button>
                         <Button
-                            style={{ backgroundColor: aspecto.nome == "Pequeno - 500x500" ? "#c13996" : "#b5afa7", color: "white" }}
+                            style={{ backgroundColor: aspecto.nome == "Pequeno - 500x500" ? temaRedeSocial : "#b5afa7", color: "white" }}
                             //variant={aspecto.nome == "Pequeno - 500x500" ? "contained" : "outlined"}
                             onClick={() => AlteraAspecto(500, 500, "Pequeno - 500x500")}
                         >500x500</Button>
@@ -252,21 +303,26 @@ function ModalInstragram({ open, OpenClose }) {
 
                 <Menu style={{ display: openMenu ? "block" : "none" }}>
                     <div>
+                        <FecharMenu onClick={() => setOpenMenu(!openMenu)}>
+                            <ExitToAppIcon sx={{ fontSize: 40 }} />
+                        </FecharMenu>
+
                         <div style={{ display: 'flex', justifyContent: "space-between" }}>
                             <p>Mover FRAME</p>
-                            <FecharMenu onClick={() => setOpenMenu(!openMenu)}>
-                                X
-                            </FecharMenu>
+
                         </div>
+
                         <div>
                             <TextField
-                                id="outlined-number" label="X" type="number" value={movimentarImagem.XFrame}
+                                id="outlined-number" label={<CompareArrowsIcon sx={{ fontSize: 50 }} style={{ color: temaRedeSocial }} />}
+                                type="number" value={movimentarImagem.XFrame}
                                 onChange={(data) => MovimentarImagem(data.target.value, "XFrame")}
                             />
                         </div>
                         <div>
                             <TextField
-                                id="outlined-number" label="Y" type="number" value={movimentarImagem.YFrame}
+                                id="outlined-number" label={<HeightIcon sx={{ fontSize: 40 }} style={{ color: temaRedeSocial }} />}
+                                type="number" value={movimentarImagem.YFrame}
                                 onChange={(data) => MovimentarImagem(data.target.value, "YFrame")}
                             />
                         </div>
@@ -278,10 +334,8 @@ function ModalInstragram({ open, OpenClose }) {
                                 value={movimentarImagem.opacityFrame}
                                 onChange={(data) => MovimentarImagem(data.target.value, "opacityFrame")}
                                 label="OpacidadeFrame"
+
                             >
-                                {/* <MenuItem value="">
-                                    <em>None</em>
-                                </MenuItem> */}
                                 <MenuItem value={0.0}>0.0</MenuItem>
                                 <MenuItem value={0.1}>0.1</MenuItem>
                                 <MenuItem value={0.2}>0.2</MenuItem>
@@ -300,13 +354,15 @@ function ModalInstragram({ open, OpenClose }) {
                             <p>Mover IMAGEM</p>
                             <div>
                                 <TextField
-                                    id="outlined-number" label="X" type="number" value={movimentarImagem.XImagem}
+                                    id="outlined-number" label={<CompareArrowsIcon sx={{ fontSize: 50 }} style={{ color: temaRedeSocial }} />}
+                                    type="number" value={movimentarImagem.XImagem}
                                     onChange={(data) => MovimentarImagem(data.target.value, "XImagem")}
                                 />
                             </div>
                             <div>
                                 <TextField
-                                    id="outlined-number" label="Y" type="number" value={movimentarImagem.YImagem}
+                                    id="outlined-number" label={<HeightIcon sx={{ fontSize: 40 }} style={{ color: temaRedeSocial }} />}
+                                    type="number" value={movimentarImagem.YImagem}
                                     onChange={(data) => MovimentarImagem(data.target.value, "YImagem")}
                                 />
                             </div>
@@ -334,7 +390,7 @@ function ModalInstragram({ open, OpenClose }) {
                             </FormControl>
                             <p>PIXELS:
                                 <Button
-                                    style={{ backgroundColor: "#c13996", color: "white", marginLeft: "40%" }}
+                                    style={{ backgroundColor: temaRedeSocial, color: "white", marginLeft: "40%" }}
                                     component="span"
                                     onClick={() => { AlterarDimensaoManual() }}
                                 >
@@ -344,50 +400,52 @@ function ModalInstragram({ open, OpenClose }) {
 
                             <div>
                                 <TextField
-                                    id="outlined-number" label="Largura IMAGEM" type="number" value={aspecto.width}
+                                    id="outlined-number" label={<CompareArrowsIcon sx={{ fontSize: 40 }} style={{ color: temaRedeSocial }} />}
+                                    type="number" value={aspecto.width}
                                     onChange={(data) => setAspecto(prevState => { return { ...prevState, width: Number(data.target.value), nome: `Outros: ${data.target.value} - ${prevState.height}px` } })}
                                 />
                                 <TextField
-                                    id="outlined-number" label="Altura IMAGEM" type="number" value={aspecto.height}
+                                    id="outlined-number" label={<HeightIcon sx={{ fontSize: 40 }} style={{ color: temaRedeSocial }} />} type="number" value={aspecto.height}
                                     onChange={(data) => setAspecto(prevState => { return { ...prevState, height: Number(data.target.value), nome: `Outros: ${prevState.width} - ${data.target.value}px` } })}
                                 />
                             </div>
                             <div>
                                 <Button
-                                    style={{ backgroundColor: "#c13996", color: "white" }}
+                                    style={{ backgroundColor: temaRedeSocial, color: "white" }}
                                     component="span"
                                     onClick={() => { OpenModalRecorte() }}
+                                    disabled={!imagemFundo}
                                 >
                                     Recortar
                                 </Button>
                             </div>
                             <div>
                                 <Button
-                                    style={{ backgroundColor: "#c13996", color: "white" }}
+                                    style={{ backgroundColor: temaRedeSocial, color: "white" }}
                                     component="span"
                                     onClick={() => { Reset() }}
+                                    disabled={!imagemFundo}
                                 >
                                     Reset
                                 </Button>
                             </div>
                             <div>
 
-
                                 <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
                                     <FormLabel component="legend">FILTROS</FormLabel>
                                     <FormGroup>
                                         <FormControlLabel
                                             control={
-                                                <Checkbox checked={filtros.duotone}
-                                                    onChange={(event) => Filtro(event.target.checked, "duotone")}
-                                                    name="duotone" />
+                                                <Checkbox checked={filtros.saturate}
+                                                    onChange={(event) => Filtro(event.target.checked, "contraste", "contrast()")}
+                                                    name="contraste" />
                                             }
-                                            label="DUOTONE"
+                                            label="CONTRASTE"
                                         />
                                         <FormControlLabel
                                             control={
                                                 <Checkbox checked={filtros.invert}
-                                                    onChange={(event) => Filtro(event.target.checked, "invert")}
+                                                    onChange={(event) => Filtro(event.target.checked, "invert", "invert(1)")}
                                                     name="invert" />
                                             }
                                             label="INVERT"
@@ -395,7 +453,7 @@ function ModalInstragram({ open, OpenClose }) {
                                         <FormControlLabel
                                             control={
                                                 <Checkbox checked={filtros.grayscale}
-                                                    onChange={(event) => Filtro(event.target.checked, "grayscale")}
+                                                    onChange={(event) => Filtro(event.target.checked, "grayscale", "grayscale(1)")}
                                                     name="grayscale" />
                                             }
                                             label="GRAYSCALE"
@@ -403,10 +461,26 @@ function ModalInstragram({ open, OpenClose }) {
                                         <FormControlLabel
                                             control={
                                                 <Checkbox checked={filtros.sepia}
-                                                    onChange={(event) => Filtro(event.target.checked, "sepia")}
+                                                    onChange={(event) => Filtro(event.target.checked, "sepia", "sepia(1)")}
                                                     name="sepia" />
                                             }
                                             label="SEPIA"
+                                        />
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox checked={filtros.blur}
+                                                    onChange={(event) => Filtro(event.target.checked, "blur", "blur(2px)")}
+                                                    name="blur" />
+                                            }
+                                            label="BLUR"
+                                        />
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox checked={filtros.original}
+                                                    onChange={(event) => Filtro(event.target.checked, "original", "original")}
+                                                    name="blur" />
+                                            }
+                                            label="ORIGINAL"
                                         />
                                     </FormGroup>
                                 </FormControl>
@@ -416,16 +490,16 @@ function ModalInstragram({ open, OpenClose }) {
                     </div>
                 </Menu>
 
-                <Mensagem>
+                <Mensagem temaRedeSocial={temaRedeSocial}>
                     <div>
                         {!imagemFundo &&
-                            <p>Adicione PRIMEIRAMENTE uma IMAGEM clicando no botão  "ADICIONAR FOTO"</p>
+                            <p>Adicione primeiramente uma IMAGEM clicando no botão  "ADICIONAR FOTO"</p>
                         }
                         {imagemFundo && !imagemFrame &&
-                            <p>Agora Formate Sua Foto</p>
+                            <p>Agora formate sua foto usando as ferramentas do MENU</p>
                         }
                         {!imagemFrame &&
-                            <p>Em Seguida Adicione um FRAME clicando no botão "ADICIONAR FRAME" </p>
+                            <p>Em seguida adicione um FRAME clicando no botão "ADICIONAR FRAME" </p>
                         }
                     </div>
                 </Mensagem>
@@ -457,13 +531,13 @@ function ModalInstragram({ open, OpenClose }) {
                                 onChange={(event) => AdicionaImagemFundo(event)}
                             />
                             <Button
-                                style={{ color: "#c13996", border: "1px #c13996 solid" }}
+                                style={{ color: temaRedeSocial, border: "1px solid", borderColor: temaRedeSocial }}
                                 variant="outlined" component="span">
                                 Adicionar foto
                             </Button>
                         </label>
                         <Button variant="outlined"
-                            style={{ color: "#c13996", border: "1px #c13996 solid" }}
+                            style={{ color: temaRedeSocial, border: "1px  solid", borderColor: temaRedeSocial }}
                             component="span"
                             onClick={() => OpenModalFrameSelecionar()}
                             disabled={imagemMergeFinal ? false : true}
@@ -472,7 +546,7 @@ function ModalInstragram({ open, OpenClose }) {
                         </Button>
                         <Button
                             //variant="contained" 
-                            style={{ backgroundColor: "#c13996", color: "white" }}
+                            style={{ backgroundColor: temaRedeSocial, color: "white" }}
                             component="span">
                             Enviar foto
                         </Button>
@@ -480,7 +554,7 @@ function ModalInstragram({ open, OpenClose }) {
                 </AdicionarEnviarBotoes>
                 <ModalInstragramFrame open={openModalFrames} OpenClose={OpenModalFrameSelecionar} FrameSelecionado={AdicionaImagemFrame} />
                 <ModalRecorteImagem open={openModalRecorte} OpenClose={OpenModalRecorte} imagemParaRecorte={imagemMergeFinal} SalavrImagemRecortada={SalavrImagemRecortada} />
-            </div>
+            </Container>
 
         </Modal >
     );

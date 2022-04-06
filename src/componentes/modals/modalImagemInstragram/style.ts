@@ -1,24 +1,63 @@
 import styled from "styled-components"
 
+
+export const Container = styled.div`
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 90vw;
+    min-width: 90vw;
+    height: 90vh;
+    background-color: white;
+    border: 2px solid #000;
+    box-shadow: 24;
+    border-radius: 7;
+    overflow: auto;
+    
+
+    scrollbar-width: thin;
+    /* "auto" or "thin" */
+    scrollbar-color: blue orange;
+    /* scroll thumb and track */
+  
+    ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+    ::-webkit-scrollbar-thumb:vertical {
+    background-color: ${(props: any) => props.temaRedeSocial};
+    border-radius: 20px;
+}
+  
+
+`
+
 export const Header = styled.header`
-    width:80vw;
+    width:90vw;
+    margin: 0;
 
     div{
         display: flex;
-        justify-content:space-between;
-        margin-top: 15px;       
-    
+        justify-content:space-around;
+        align-items: center;
+        //margin-top: 15px;       
+        font-family: 'Oswald', sans-serif;
+      
 
         h1{
-            font-size: 25px;
+
+            font-size: 40px;
+            color: ${(props: any) => props.temaRedeSocial};
+            margin: 0px;
+            
         }
     }
 
 `
-
 export const AspectoImagem = styled.main`
-    width:100%;
-  
+      
     div{
         display: flex;
         justify-content: center;
@@ -29,6 +68,10 @@ export const AspectoImagem = styled.main`
 
     p{
         text-align: center;
+        font-family: 'Oswald', sans-serif;
+        font-size: 35px;
+        color: ${(props: any) => props.temaRedeSocial}
+      
     }
 `
 
@@ -52,21 +95,26 @@ export const Menu = styled.div`
     flex-direction: column;
         div{
             margin-top: 10px;
+            p{
+                font-family: 'Oswald', sans-serif;
+                font-size: 20px;
+                word-spacing: 1px;
+                line-height: 5px;
+            }
         }
 
     }
 
 `
 export const FecharMenu = styled.p`
-    font-size: 40px;
-    margin: 0px; 
-
     cursor: pointer;
+    font-size: 40px;
+    margin: 0 auto; 
+    padding: 5px;
     transition: all 1s;
+  
     &:hover{
-        background-color: #ccd6d2;
-        border-radius: 25px;
-        color:red;
+          color:red;
     }
 
 `
@@ -83,12 +131,16 @@ display: flex;
         display: flex;
         flex-direction: column;
         text-align: center;
-        background-color: #d1cdd0;
+       //background-color: #d1cdd0;
+        border: 2px  solid ${(props: any) => props.temaRedeSocial};;  
         padding: 15px;
         border-radius: 15px;
+        background-color: ${(props: any) => props.temaRedeSocial == "#c13996" ? "#f5d9ec" : "#b5c5ee"};
 
         p{
-            color: #2a2631
+            color: #2a2631;
+            font-family: 'Oswald', sans-serif;
+            font-size: 27px
         }
     }
 `
@@ -100,18 +152,21 @@ export const EdicaoImagem = styled.main`
     div{
         /* height: 50vh;
         width: 50vw; */
+        width: 90vw;
 
         margin-top:30px;
         //background-color: red;
         display:flex;
-        //justify-content: center;
-        
+        justify-content: center;
+                
 
         img{
             /* width: 85%;
             height: 85% */
             /* width: auto;
             height: auto */
+            max-width: 100%;
+            margin-left: 5px
    
         }
     }
