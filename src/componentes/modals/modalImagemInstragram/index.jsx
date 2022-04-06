@@ -57,11 +57,12 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         opacityImagem: 1
     })
     const [filtros, setFiltros] = useState({
-        contraste: false,
-        grayscale: false,
-        sepia: false,
-        invert: false,
-        blur: false
+        contraste: "1",
+        grayscale: "0",
+        sepia: "0",
+        invert: "0",
+        blur: "0px",
+        brightness: "0"
     })
 
     async function SalavrImagemRecortada(imagemRecortada) {
@@ -202,7 +203,7 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
             canvas.width = imgW;
             canvas.height = imgH;
 
-            canvasContext.filter = "contrast(10)";
+            canvasContext.filter = "brightness(3)";
             canvasContext.drawImage(imgObj[0], 0, 0, imgObj[0].width, imgObj[0].height)
             console.log(canvas.toDataURL())
             setImagemMergeFinal(canvas.toDataURL())
@@ -234,22 +235,6 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         }
         return
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     return (
 
@@ -434,6 +419,44 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                                 <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
                                     <FormLabel component="legend">FILTROS</FormLabel>
                                     <FormGroup>
+                                        <TextField
+                                            id="outlined-number" label="CONTRASTE"
+                                            //inputProps={{ min: "0.0", max: "1", step: ".1" }}
+                                            inputProps={{ min: "0", max: "100", step: "1" }}
+                                            type="number"
+                                            value={filtros.contraste}
+                                        />
+
+                                        <TextField
+                                            id="outlined-number" label="GRAYSCALE"
+                                            inputProps={{ min: "0", max: "100", step: "1" }}
+                                            type="number"
+                                            value={filtros.grayscale}
+                                        />
+                                        <TextField
+                                            id="outlined-number" label="SEPIA"
+                                            inputProps={{ min: "0.0", max: "1", step: ".1" }}
+                                            type="number"
+                                            value={filtros.sepia}
+                                        />
+                                        <TextField
+                                            id="outlined-number" label="BLUR"
+                                            inputProps={{ min: "0", max: "10", step: "1" }}
+                                            type="number"
+                                            value={filtros.blur}
+                                        />
+                                        <TextField
+                                            id="outlined-number" label="INVERTER"
+                                            inputProps={{ min: "0.0", max: "1", step: ".1" }}
+                                            type="number"
+                                            value={filtros.invert}
+                                        />
+                                        <TextField
+                                            id="outlined-number" label="BRILHO"
+                                            inputProps={{ min: "0.0", max: "3", step: ".1" }}
+                                            type="number"
+                                            value={filtros.brightness}
+                                        />
                                         <FormControlLabel
                                             control={
                                                 <Checkbox checked={filtros.saturate}
