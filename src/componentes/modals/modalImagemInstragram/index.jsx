@@ -60,9 +60,9 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         contraste: "1",
         grayscale: "0",
         sepia: "0",
-        invert: "0",
-        blur: "0px",
-        brightness: "0"
+        inverter: "0",
+        blur: "0",
+        brilho: "0"
     })
 
     async function SalavrImagemRecortada(imagemRecortada) {
@@ -96,7 +96,6 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
 
         try {
             setImagemFundoOriginal(event.target.files[0])
-            console.log(event.target.files[0])
             //const image = await resizeFile(width, height, event.target.files[0]);
             const imageBase64 = await ImagemFileParaBase64(width, height, event.target.files[0])
             const image = await AlterarDimensaoImagem(width, height, imageBase64)
@@ -186,15 +185,26 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
 
     function Filtro(value, propriedade, valueFilter) {
         setFiltros(prevState => { return { ...prevState, [propriedade]: value, selecionado: propriedade } })
-        setImagemMergeOriginal(imagemMergeFinal) //armazena o estado original sem alterações na imagem
+        //setImagemMergeOriginal(imagemMergeFinal) //armazena o estado original sem alterações na imagem
 
         if (propriedade == "original") {
+            setFiltros({
+                contraste: "1",
+                grayscale: "0",
+                sepia: "0",
+                inverter: "0",
+                blur: "0",
+                brilho: "0"
+            })
+
             setImagemMergeFinal(imagemMergeOriginal)
             return
         }
+        console.log(valueFilter)
 
         var imgObj = document.getElementsByClassName('imagemFinal');
-        function gray(imgObj, filter) {
+        imgObj[0].src = imagemMergeOriginal
+        function gray(imgObj) {
             var canvas = document.createElement('canvas');
             var canvasContext = canvas.getContext('2d');
 
@@ -203,12 +213,11 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
             canvas.width = imgW;
             canvas.height = imgH;
 
-            canvasContext.filter = "brightness(3)";
+            canvasContext.filter = valueFilter;
             canvasContext.drawImage(imgObj[0], 0, 0, imgObj[0].width, imgObj[0].height)
-            console.log(canvas.toDataURL())
             setImagemMergeFinal(canvas.toDataURL())
         }
-        imgObj.src = gray(imgObj);
+        gray(imgObj);
 
 
 
@@ -286,7 +295,7 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                     </div>
                 </AspectoImagem>
 
-                <Menu style={{ display: openMenu ? "block" : "none" }}>
+                <Menu temaRedeSocial={temaRedeSocial} style={{ display: openMenu ? "block" : "none" }}>
                     <div>
                         <FecharMenu onClick={() => setOpenMenu(!openMenu)}>
                             <ExitToAppIcon sx={{ fontSize: 40 }} />
@@ -416,97 +425,63 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                             </div>
                             <div>
 
-                                <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
-                                    <FormLabel component="legend">FILTROS</FormLabel>
-                                    <FormGroup>
-                                        <TextField
-                                            id="outlined-number" label="CONTRASTE"
-                                            //inputProps={{ min: "0.0", max: "1", step: ".1" }}
-                                            inputProps={{ min: "0", max: "100", step: "1" }}
-                                            type="number"
-                                            value={filtros.contraste}
-                                        />
+                                {/* <FormControl sx={{ m: 3 }} component="fieldset" variant="standard"> */}
+                                {/* <FormLabel component="legend">FILTROS</FormLabel> */}
+                                <FormGroup>
+                                    <p>FILTROS</p>
+                                    <TextField
+                                        id="outlined-number" label="CONTRASTE"
+                                        onChange={(event) => Filtro(event.target.value, "contraste", `contrast(${event.target.value})`)}
+                                        inputProps={{ min: "0", max: "100", step: "1" }}
+                                        type="number"
+                                        value={filtros.contraste}
 
-                                        <TextField
-                                            id="outlined-number" label="GRAYSCALE"
-                                            inputProps={{ min: "0", max: "100", step: "1" }}
-                                            type="number"
-                                            value={filtros.grayscale}
-                                        />
-                                        <TextField
-                                            id="outlined-number" label="SEPIA"
-                                            inputProps={{ min: "0.0", max: "1", step: ".1" }}
-                                            type="number"
-                                            value={filtros.sepia}
-                                        />
-                                        <TextField
-                                            id="outlined-number" label="BLUR"
-                                            inputProps={{ min: "0", max: "10", step: "1" }}
-                                            type="number"
-                                            value={filtros.blur}
-                                        />
-                                        <TextField
-                                            id="outlined-number" label="INVERTER"
-                                            inputProps={{ min: "0.0", max: "1", step: ".1" }}
-                                            type="number"
-                                            value={filtros.invert}
-                                        />
-                                        <TextField
-                                            id="outlined-number" label="BRILHO"
-                                            inputProps={{ min: "0.0", max: "3", step: ".1" }}
-                                            type="number"
-                                            value={filtros.brightness}
-                                        />
-                                        <FormControlLabel
-                                            control={
-                                                <Checkbox checked={filtros.saturate}
-                                                    onChange={(event) => Filtro(event.target.checked, "contraste", "contrast()")}
-                                                    name="contraste" />
-                                            }
-                                            label="CONTRASTE"
-                                        />
-                                        <FormControlLabel
-                                            control={
-                                                <Checkbox checked={filtros.invert}
-                                                    onChange={(event) => Filtro(event.target.checked, "invert", "invert(1)")}
-                                                    name="invert" />
-                                            }
-                                            label="INVERT"
-                                        />
-                                        <FormControlLabel
-                                            control={
-                                                <Checkbox checked={filtros.grayscale}
-                                                    onChange={(event) => Filtro(event.target.checked, "grayscale", "grayscale(1)")}
-                                                    name="grayscale" />
-                                            }
-                                            label="GRAYSCALE"
-                                        />
-                                        <FormControlLabel
-                                            control={
-                                                <Checkbox checked={filtros.sepia}
-                                                    onChange={(event) => Filtro(event.target.checked, "sepia", "sepia(1)")}
-                                                    name="sepia" />
-                                            }
-                                            label="SEPIA"
-                                        />
-                                        <FormControlLabel
-                                            control={
-                                                <Checkbox checked={filtros.blur}
-                                                    onChange={(event) => Filtro(event.target.checked, "blur", "blur(2px)")}
-                                                    name="blur" />
-                                            }
-                                            label="BLUR"
-                                        />
-                                        <FormControlLabel
-                                            control={
-                                                <Checkbox checked={filtros.original}
-                                                    onChange={(event) => Filtro(event.target.checked, "original", "original")}
-                                                    name="blur" />
-                                            }
-                                            label="ORIGINAL"
-                                        />
-                                    </FormGroup>
-                                </FormControl>
+                                    />
+
+                                    <TextField
+                                        id="outlined-number" label="GRAYSCALE"
+                                        onChange={(event) => Filtro(event.target.value, "grayscale", `grayscale(${event.target.value})`)}
+                                        inputProps={{ min: "0", max: "100", step: "1" }}
+                                        type="number"
+                                        value={filtros.grayscale}
+                                    />
+                                    <TextField
+                                        id="outlined-number" label="SEPIA"
+                                        onChange={(event) => Filtro(event.target.value, "sepia", `sepia(${event.target.value})`)}
+                                        inputProps={{ min: "0.0", max: "1", step: ".1" }}
+                                        type="number"
+                                        value={filtros.sepia}
+                                    />
+                                    <TextField
+                                        id="outlined-number" label="BLUR"
+                                        onChange={(event) => Filtro(event.target.value, "blur", `blur(${event.target.value}px)`)}
+                                        inputProps={{ min: "0", max: "10", step: "1" }}
+                                        type="number"
+                                        value={filtros.blur}
+                                    />
+                                    <TextField
+                                        id="outlined-number" label="INVERTER"
+                                        onChange={(event) => Filtro(event.target.value, "inverter", `invert(${event.target.value})`)}
+                                        inputProps={{ min: "0.0", max: "1", step: ".1" }}
+                                        type="number"
+                                        value={filtros.inverter}
+                                    />
+                                    <TextField
+                                        id="outlined-number" label="BRILHO"
+                                        onChange={(event) => Filtro(event.target.value, "brilho", `brightness(${event.target.value})`)}
+                                        inputProps={{ min: "0.0", max: "3", step: ".1" }}
+                                        type="number"
+                                        value={filtros.brilho}
+                                    />
+                                    <Button
+                                        style={{ backgroundColor: temaRedeSocial, color: "white", marginLeft: "40%", marginTop: "6%" }}
+                                        component="span"
+                                        onClick={(_) => Filtro(_, "original", "original")}
+                                    >Reset Cores
+
+                                    </Button>
+                                </FormGroup>
+                                {/* </FormControl> */}
 
                             </div>
                         </div>
@@ -575,8 +550,8 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                         </Button>
                     </div>
                 </AdicionarEnviarBotoes>
-                <ModalInstragramFrame open={openModalFrames} OpenClose={OpenModalFrameSelecionar} FrameSelecionado={AdicionaImagemFrame} />
-                <ModalRecorteImagem open={openModalRecorte} OpenClose={OpenModalRecorte} imagemParaRecorte={imagemMergeFinal} SalavrImagemRecortada={SalavrImagemRecortada} />
+                <ModalInstragramFrame open={openModalFrames} OpenClose={OpenModalFrameSelecionar} FrameSelecionado={AdicionaImagemFrame} temaRedeSocial={temaRedeSocial} />
+                <ModalRecorteImagem open={openModalRecorte} OpenClose={OpenModalRecorte} imagemParaRecorte={imagemMergeFinal} SalavrImagemRecortada={SalavrImagemRecortada} temaRedeSocial={temaRedeSocial} />
             </Container>
 
         </Modal >

@@ -68,7 +68,6 @@ export const ImagemFileParaBase64 = (width, height, file) =>
         );
     });
 
-
 export const AlterarDimensaoImagem = (width, height, imagem) =>
     new Promise((resolve) => {
         mergeImagesV2([{ src: imagem, width, height }])

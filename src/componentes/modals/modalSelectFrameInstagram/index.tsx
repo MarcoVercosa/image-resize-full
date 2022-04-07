@@ -13,10 +13,11 @@ interface IModalInstragramFrame {
     open: boolean;
     OpenClose: () => void;
     FrameSelecionado: (imagem: string) => void
+    temaRedeSocial: string
 }
 
 
-function ModalInstragramFrame({ open, OpenClose, FrameSelecionado }: IModalInstragramFrame) {
+function ModalInstragramFrame({ open, OpenClose, FrameSelecionado, temaRedeSocial }: IModalInstragramFrame) {
 
     const [imagemFrameSelecionado, setImagemFrameSelecionado] = useState<any>("")
 
@@ -56,7 +57,7 @@ function ModalInstragramFrame({ open, OpenClose, FrameSelecionado }: IModalInstr
                 }}
             >
 
-                <Header>
+                <Header temaRedeSocial={temaRedeSocial}>
                     <div>
                         <h1>Selecione o Frame</h1>
                         <p onClick={() => OpenClose()}>X</p>
@@ -73,19 +74,20 @@ function ModalInstragramFrame({ open, OpenClose, FrameSelecionado }: IModalInstr
                     </ImagensFrame>
                 }
 
-
-
                 <AdicionarEnviarBotoes>
                     <div>
                         <label htmlFor="contained-button-files">
                             <Input accept="image/*" id="contained-button-files" multiple={false} type="file"
                                 onChange={(event) => SelecionaFrame(event)}
                             />
-                            <Button variant="contained" component="span">
+                            <Button variant="contained" component="span"
+                                style={{ backgroundColor: temaRedeSocial }}
+                            >
                                 Adicionar Frame
                             </Button>
                         </label>
                         <Button variant="contained" component="span"
+                            style={{ backgroundColor: temaRedeSocial }}
                             onClick={() => EnviaFrameParaEdicao()}
                             disabled={!imagemFrameSelecionado}
                         >

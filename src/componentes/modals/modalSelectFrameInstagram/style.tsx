@@ -1,6 +1,6 @@
 import styled from "styled-components"
 
-export const Header = styled.header`
+export const Header: any = styled.header`
     width:70vw;
 
     div{
@@ -10,13 +10,15 @@ export const Header = styled.header`
         width: 87vw;
 
         h1{
+            color: ${(props: any) => props.temaRedeSocial};
             font-size: 25px;    
             margin-left: 15px       
         }
-        p{
+        p{            
             font-size: 30px;
             padding: 0;
             margin: 0px 0 0 0;
+            transition: all 1s;;
             cursor: pointer;
             &:hover{
                 color: red

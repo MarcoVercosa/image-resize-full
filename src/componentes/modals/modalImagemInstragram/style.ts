@@ -77,7 +77,7 @@ export const AspectoImagem = styled.main`
 
 export const Menu = styled.div`
     position: fixed; 
-    top: 52%;
+    top: 70%;
     left: 1%;
     background-color:#f9f9f9;
     padding: 10px;
@@ -86,6 +86,22 @@ export const Menu = styled.div`
     z-index: 100;
     opacity: 0.2;
     transition: all 1s;
+    height: 80vh;
+    overflow: scroll;
+    scrollbar-width: thin;
+    /* "auto" or "thin" */
+    scrollbar-color: blue orange;
+    /* scroll thumb and track */
+  
+    ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+    ::-webkit-scrollbar-thumb:vertical {
+    background-color: ${(props: any) => props.temaRedeSocial};
+    border-radius: 20px;
+}
 
     &:hover{
         opacity:1;
