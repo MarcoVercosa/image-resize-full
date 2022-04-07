@@ -44,6 +44,7 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
     const [imagemFrame, setImagemFrame] = useState()
     const [imagemMergeOriginal, setImagemMergeOriginal] = useState()
     const [imagemMergeFinal, setImagemMergeFinal] = useState()
+    const [houveRecorte, setHouveRecorte] = useState(false)
     const [movimentarImagem, setMovimentarImagem] = useState({
         XFrame: 0,
         YFrame: 0,
@@ -65,12 +66,13 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         fetch(imagemRecortada)
             .then(res => res.blob())//transforma em blob
             .then(blob => {
-                //setImagemFundoOriginal(blob) // pega a imagem BLOB para a func Alterar Aspecto se basear na imagem recortada
+                // pega a imagem BLOB para a func Alterar Aspecto se basear na imagem recortada
                 const file = new File([blob], "File name", { type: "image/png" })//transforma em aquivo
                 IdentificaDimensoesImagem(file).then(({ width, height }) => setAspecto({ width, height, nome: `Outros: ${width}x${height}px` })) //pega a nova dimenção e armazena
                 BlobParaBase64(blob).then(data => {// altera o blob para base64  e armazena para a func Alterar Aspecto se basear na imagem recortada
                     setImagemFundoOriginal(data)
                     setImagemMergeFinal(data)//salva para renderizar as alterações
+                    setHouveRecorte(true)
                 })
             })
     }
@@ -117,22 +119,29 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         // Se não houver:
         // Altera o aspecto apenas a imagem de fundo setOriginal
         // Se houver: Padronize as 2 com o mesmo tamanho solicitado e faz o merge
-        if (!imagemFrameOriginal) {
+        if (!imagemFrameOriginal || houveRecorte) {//se houve algum recorte não faz o resize  adicionando um novo frame
             try {
-                const imageFinal = await AlterarDimensaoImagem(width, height, imagemFundoOriginal)
+                const imageFinal = await AlterarDimensaoImagem(width, height, imagemFundoOriginal)//altera o aspecto
                 setImagemFundo(imageFinal)
                 setImagemMergeFinal(imageFinal)
                 setImagemMergeOriginal(imageFinal)
                 setAspecto({ width: width, height: height, nome: nomeAspecto })
+                setFiltros({//é necessario zerar os filtros, pois para alterar o tamanho se baseia na imagem original, sem filtros
+                    contraste: "1",
+                    grayscale: "0",
+                    sepia: "0",
+                    inverter: "0",
+                    blur: "0",
+                    brilho: "1"
+                })
             } catch (err) {
                 console.log(err);
             }
         } else {
             try {
-                //const imageFundoBase64 = await ImagemFileParaBase64(width, height, imagemFundoOriginal)//transforma em base64
-                const imageFundoFinal = await AlterarDimensaoImagem(width, height, imagemFundoOriginal)    // altera dimensionamento
+                const imageFundoFinal = await AlterarDimensaoImagem(width, height, imagemFundoOriginal)    // altera dimensionamento da imagem fundo
                 const imageFrameBase64 = await ImagemFileParaBase64(width, height, imagemFrameOriginal)//transforma em base64
-                const imageFrameFinal = await AlterarDimensaoImagem(width, height, imageFrameBase64)  // altera dimensionamento
+                const imageFrameFinal = await AlterarDimensaoImagem(width, height, imageFrameBase64)  // altera dimensionamento da imagem frame
                 setImagemFundo(imageFundoFinal) //usado pelo movimentarImagem()
                 setImagemFrame(imageFrameFinal) //usado pelo movimentarImagem()
                 //chama o moverImagem para caso ja tenha alguma alteração de imagem
@@ -140,6 +149,14 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                 setImagemMergeOriginal(resultado)
                 setImagemMergeFinal(resultado)
                 setAspecto({ width: width, height: height, nome: nomeAspecto })
+                setFiltros({
+                    contraste: "1",
+                    grayscale: "0",
+                    sepia: "0",
+                    inverter: "0",
+                    blur: "0",
+                    brilho: "1"
+                })
             } catch (err) {
                 console.log(err);
             }
@@ -148,6 +165,9 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
     async function MovimentarImagem(value, propriedade) {
         if (!imagemFrame) {
             alert("Necessário selecionar o frame")
+        }
+        if (houveRecorte) {
+            alert("Após o recorte da imagem a opção de Mover fica desabilitada para a manter a qualidade da imagem")
         }
         setMovimentarImagem(prevState => { return { ...prevState, [propriedade]: Number(value) } })
         let dados = movimentarImagem
@@ -192,16 +212,9 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
             canvas.height = imgH;
             canvasContext.filter = valueFilter;
             canvasContext.drawImage(imgObj[0], 0, 0, imgObj[0].width, imgObj[0].height)
-            //setImagemMergeFinal(canvas.toDataURL())
-
-
-
             AlterarDimensaoImagem(aspecto.width, aspecto.height, canvas.toDataURL()).then(data => {//Adiciona o tamanho e largura configurados anteriormente na nova movimentação
                 setImagemMergeFinal(data)
             })
-
-
-
         }
         gray(imgObj);
     }
@@ -209,6 +222,7 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         var resposta = (window.confirm("Deseja realmente sair ?"))
         if (resposta) {
             setOpenMenu(false)
+            setHouveRecorte(false)
             setImagemFrame("")
             setImagemFrameOriginal("")
             setImagemFundo("")
@@ -224,6 +238,7 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
             setImagemFrameOriginal("")
             setImagemFundo("")
             setImagemMergeFinal("")
+            setHouveRecorte(false)
         }
         return
     }
