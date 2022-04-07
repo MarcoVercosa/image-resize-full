@@ -62,18 +62,17 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
     })
 
     async function SalvarImagemRecortada(imagemRecortada) {
-
-
         fetch(imagemRecortada)
             .then(res => res.blob())//transforma em blob
             .then(blob => {
                 //setImagemFundoOriginal(blob) // pega a imagem BLOB para a func Alterar Aspecto se basear na imagem recortada
                 const file = new File([blob], "File name", { type: "image/png" })//transforma em aquivo
                 IdentificaDimensoesImagem(file).then(({ width, height }) => setAspecto({ width, height, nome: `Outros: ${width}x${height}px` })) //pega a nova dimenção e armazena
-                BlobParaBase64(blob).then(data => setImagemFundoOriginal(data)) // altera o blob para base64  e armazena para a func Alterar Aspecto se basear na imagem recortada
-
+                BlobParaBase64(blob).then(data => {// altera o blob para base64  e armazena para a func Alterar Aspecto se basear na imagem recortada
+                    setImagemFundoOriginal(data)
+                    setImagemMergeFinal(data)//salva para renderizar as alterações
+                })
             })
-        setImagemMergeFinal(imagemRecortada)//para ser renderizada a nova imagem recortada
     }
 
     function OpenModalFrameSelecionar() {
@@ -87,13 +86,9 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         let { width, height } = await IdentificaDimensoesImagem(event.target.files[0])
 
         try {
-            //setImagemFundoOriginal(event.target.files[0])
-            //const image = await resizeFile(width, height, event.target.files[0]);
             const imageBase64 = await ImagemFileParaBase64(width, height, event.target.files[0])
             const image = await AlterarDimensaoImagem(width, height, imageBase64)
-
             setImagemFundoOriginal(imageBase64)
-
             setImagemMergeOriginal(image)
             setImagemFundo(image)
             setImagemMergeFinal(image);
@@ -103,10 +98,6 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         }
     }
     async function AdicionaImagemFrame(imagem) {
-        // if (event.target.files.length > 10) {
-        //     alert("Até 10 imagens podem serem selecionadas ")
-        //     return
-        // }
         setImagemFrameOriginal(imagem)
         const imageBase64 = await ImagemFileParaBase64(aspecto.width, aspecto.height, imagem)
         const image = await AlterarDimensaoImagem(aspecto.width, aspecto.height, imageBase64)
@@ -127,9 +118,6 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         // Altera o aspecto apenas a imagem de fundo setOriginal
         // Se houver: Padronize as 2 com o mesmo tamanho solicitado e faz o merge
         if (!imagemFrameOriginal) {
-            console.log(imagemFundoOriginal)
-            console.log(typeof (imagemFundoOriginal))
-
             try {
                 const imageFinal = await AlterarDimensaoImagem(width, height, imagemFundoOriginal)
                 setImagemFundo(imageFinal)
@@ -164,9 +152,20 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         setMovimentarImagem(prevState => { return { ...prevState, [propriedade]: Number(value) } })
         let dados = movimentarImagem
         dados = { ...dados, [propriedade]: Number(value) }
-        let resultado = await MoverImagensEOpacidade(imagemFundo, imagemFrame, dados)
-        setImagemMergeOriginal(resultado)
-        setImagemMergeFinal(resultado)
+        let resultado = await MoverImagensEOpacidade(imagemFundo, imagemFrame, dados)//movimenta a imagem
+        fetch(resultado)
+            .then(res => res.blob())//transforma em blob
+            .then(blob => {
+                //setImagemFundoOriginal(blob) // pega a imagem BLOB para a func Alterar Aspecto se basear na imagem recortada
+                //const file = new File([blob], "filemovimentar", { type: "image/png" })//transforma em aquivo
+                //IdentificaDimensoesImagem(file).then(({ width, height }) => {
+                //setAspecto({ width, height, nome: `Outros: ${width}x${height}px` }) //pega a nova dimenção e armazena
+                AlterarDimensaoImagem(aspecto.width, aspecto.height, resultado).then(data => {//Adiciona o tamanho e largura configurados anteriormente na nova movimentação
+                    setImagemMergeOriginal(data)
+                    setImagemMergeFinal(data)
+                })
+                //})
+            })
     }
 
     async function AlterarDimensaoManual() {
@@ -226,7 +225,7 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
             setImagemFrame("")
             setImagemFrameOriginal("")
             setImagemFundo("")
-            setImagemMergeFinal(imagemFundoOriginal)
+            setImagemMergeFinal("")
         }
         return
     }
@@ -483,14 +482,6 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                         }
                     </div>
                 </Mensagem>
-                {/* <ImageFilter
-                    image="https://assets.b9.com.br/wp-content/uploads/2018/02/Google-Imagens.png"
-                    //image={imagemMergeFinal}
-                    filter={filtros.selecionado} // see docs beneath
-                    colorOne={[40, 250, 250]}
-                    colorTwo={[250, 150, 30]}
-                    onChange={(filter) => console.log(filter)}
-                /> */}
 
                 <EdicaoImagem>
                     {imagemMergeFinal &&
@@ -530,7 +521,7 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                             component="span"
                             disabled={!imagemMergeFinal}
                         >
-                            <a download="teste.png" href={imagemMergeFinal}
+                            <a download="RedeSocial.png" href={imagemMergeFinal}
                             > Enviar foto</a>
                         </Button>
 

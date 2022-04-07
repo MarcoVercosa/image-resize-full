@@ -89,6 +89,6 @@ export default async function RecortarImagem(
   return new Promise((resolve, reject) => {
     canvas.toBlob((file) => {
       resolve(URL.createObjectURL(file))
-    }, 'image/jpeg')
+    }, 'image/png')
   })
 }

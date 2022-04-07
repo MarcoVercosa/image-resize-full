@@ -15,11 +15,12 @@ export async function IdentificaDimensoesImagem(imagem) {
             image.onload = function () {
                 var height = this.height;
                 var width = this.width;
+                console.log(width, height)
                 resolve({ width, height })
             };
             //Set the Base64 string return from FileReader as source.
             image.src = e.target.result;
-            image.onerror = function (e) { console.log("Image failed!"); };
+            image.onerror = function (e) { console.log("Image failed!" + e); };
         };
         reader.readAsDataURL(imagem);
     })
