@@ -27,8 +27,6 @@ import { ModalInstragramFrame } from '../modalSelectFrameInstagram';
 import { ModalRecorteImagem } from '../modalRecorteImagem';
 import { Container, Header, AspectoImagem, Menu, Mensagem, AdicionarEnviarBotoes, EdicaoImagem, FecharMenu } from "./style"
 import { BlobParaBase64, ImagemParaBlob, ImagemFileParaBase64, AlterarDimensaoImagem, MoverImagensEOpacidade, IdentificaDimensoesImagem, MergeImagens } from '../../services/services';
-import { isConstructorDeclaration } from 'typescript';
-
 
 
 const Input = styled('input')({
@@ -36,8 +34,6 @@ const Input = styled('input')({
 });
 
 function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
-    // console.log(imageFilterCore)
-    // console.log(imageGrayscale)
     const [openModalFrames, setOpenModalFrames] = useState(false)
     const [openMenu, setOpenMenu] = useState(false)
     const [openModalRecorte, setOpenModalRecorte] = useState(false)
@@ -62,12 +58,10 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         sepia: "0",
         inverter: "0",
         blur: "0",
-        brilho: "0"
+        brilho: "1"
     })
 
-    async function SalavrImagemRecortada(imagemRecortada) {
-
-        //if (!imagemFrameOriginal) {//se não houver frame add
+    async function SalvarImagemRecortada(imagemRecortada) {
         fetch(imagemRecortada)
             .then(res => res.blob())//transforma em blob
             .then(blob => {
@@ -95,10 +89,13 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         let { width, height } = await IdentificaDimensoesImagem(event.target.files[0])
 
         try {
-            setImagemFundoOriginal(event.target.files[0])
+            //setImagemFundoOriginal(event.target.files[0])
             //const image = await resizeFile(width, height, event.target.files[0]);
             const imageBase64 = await ImagemFileParaBase64(width, height, event.target.files[0])
             const image = await AlterarDimensaoImagem(width, height, imageBase64)
+
+            setImagemFundoOriginal(imageBase64)
+
             setImagemMergeOriginal(image)
             setImagemFundo(image)
             setImagemMergeFinal(image);
@@ -116,7 +113,6 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         const imageBase64 = await ImagemFileParaBase64(aspecto.width, aspecto.height, imagem)
         const image = await AlterarDimensaoImagem(aspecto.width, aspecto.height, imageBase64)
         setImagemFrame(image)
-        //MergeImagens(image)
         let resultado = await MergeImagens(imagemMergeFinal, image) // solicita o merge das 2 imagens
         setImagemMergeOriginal(resultado)
         setImagemMergeFinal(resultado)
@@ -134,8 +130,7 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         // Se houver: Padronize as 2 com o mesmo tamanho solicitado e faz o merge
         if (!imagemFrameOriginal) {
             try {
-                const imageBase64 = await ImagemFileParaBase64(width, height, imagemFundoOriginal)
-                const imageFinal = await AlterarDimensaoImagem(width, height, imageBase64)
+                const imageFinal = await AlterarDimensaoImagem(width, height, imagemFundoOriginal)
                 setImagemFundo(imageFinal)
                 setImagemMergeFinal(imageFinal)
                 setImagemMergeOriginal(imageFinal)
@@ -145,8 +140,8 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
             }
         } else {
             try {
-                const imageFundoBase64 = await ImagemFileParaBase64(width, height, imagemFundoOriginal)//transforma em base64
-                const imageFundoFinal = await AlterarDimensaoImagem(width, height, imageFundoBase64)    // altera dimensionamento
+                //const imageFundoBase64 = await ImagemFileParaBase64(width, height, imagemFundoOriginal)//transforma em base64
+                const imageFundoFinal = await AlterarDimensaoImagem(width, height, imagemFundoOriginal)    // altera dimensionamento
                 const imageFrameBase64 = await ImagemFileParaBase64(width, height, imagemFrameOriginal)//transforma em base64
                 const imageFrameFinal = await AlterarDimensaoImagem(width, height, imageFrameBase64)  // altera dimensionamento
                 setImagemFundo(imageFundoFinal) //usado pelo movimentarImagem()
@@ -174,10 +169,6 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
     }
 
     async function AlterarDimensaoManual() {
-        // let data = aspecto
-        // data = { ...data, [propriedade]: Number(value) }
-        // data = { ...data, nome: `Outros - ${data.width} - ${data.height}px` }
-        // setAspecto(data)
         let imagem = await AlterarDimensaoImagem(aspecto.width, aspecto.height, imagemMergeFinal)
         setImagemMergeFinal(imagem)
         console.log(aspecto)
@@ -185,7 +176,6 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
 
     function Filtro(value, propriedade, valueFilter) {
         setFiltros(prevState => { return { ...prevState, [propriedade]: value, selecionado: propriedade } })
-        //setImagemMergeOriginal(imagemMergeFinal) //armazena o estado original sem alterações na imagem
 
         if (propriedade == "original") {
             setFiltros({
@@ -196,11 +186,9 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                 blur: "0",
                 brilho: "0"
             })
-
             setImagemMergeFinal(imagemMergeOriginal)
             return
         }
-        console.log(valueFilter)
 
         var imgObj = document.getElementsByClassName('imagemFinal');
         imgObj[0].src = imagemMergeOriginal
@@ -218,9 +206,6 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
             setImagemMergeFinal(canvas.toDataURL())
         }
         gray(imgObj);
-
-
-
     }
     function FecharModalEdicao() {
         var resposta = (window.confirm("Deseja realmente sair ? "))
@@ -237,12 +222,14 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
             setImagemFrame("")
             setImagemFrameOriginal("")
             setImagemFundo("")
-            setImagemFundoOriginal("")
-            setImagemMergeFinal("")
-            setImagemMergeOriginal("")
+            setImagemMergeFinal(imagemFundoOriginal)
             setOpenMenu(false)
         }
         return
+    }
+
+    function EnviarFoto() {
+
     }
 
     return (
@@ -253,6 +240,7 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
             aria-OpenClose="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
+
             <Container temaRedeSocial={temaRedeSocial}
             >
                 <Header temaRedeSocial={temaRedeSocial}>
@@ -424,9 +412,6 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                                 </Button>
                             </div>
                             <div>
-
-                                {/* <FormControl sx={{ m: 3 }} component="fieldset" variant="standard"> */}
-                                {/* <FormLabel component="legend">FILTROS</FormLabel> */}
                                 <FormGroup>
                                     <p>FILTROS</p>
                                     <TextField
@@ -435,13 +420,12 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                                         inputProps={{ min: "0", max: "100", step: "1" }}
                                         type="number"
                                         value={filtros.contraste}
-
                                     />
 
                                     <TextField
                                         id="outlined-number" label="GRAYSCALE"
                                         onChange={(event) => Filtro(event.target.value, "grayscale", `grayscale(${event.target.value})`)}
-                                        inputProps={{ min: "0", max: "100", step: "1" }}
+                                        inputProps={{ min: "0", max: "1", step: "1" }}
                                         type="number"
                                         value={filtros.grayscale}
                                     />
@@ -494,7 +478,7 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                             <p>Adicione primeiramente uma IMAGEM clicando no botão  "ADICIONAR FOTO"</p>
                         }
                         {imagemFundo && !imagemFrame &&
-                            <p>Agora formate sua foto usando as ferramentas do MENU</p>
+                            <p>Agora, altere o aspecto da imagem de forma automática utilizando os botões acima, ou manualmente utilizando as ferramentas do MENU</p>
                         }
                         {!imagemFrame &&
                             <p>Em seguida adicione um FRAME clicando no botão "ADICIONAR FRAME" </p>
@@ -542,16 +526,19 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                         >
                             Adicionar Frame
                         </Button>
+
                         <Button
-                            //variant="contained" 
                             style={{ backgroundColor: temaRedeSocial, color: "white" }}
-                            component="span">
-                            Enviar foto
+                            component="span"
+                            disabled={!imagemMergeFinal}
+                        >
+                            <a download="teste.png" href={imagemMergeFinal}> Enviar foto</a>
                         </Button>
+
                     </div>
                 </AdicionarEnviarBotoes>
                 <ModalInstragramFrame open={openModalFrames} OpenClose={OpenModalFrameSelecionar} FrameSelecionado={AdicionaImagemFrame} temaRedeSocial={temaRedeSocial} />
-                <ModalRecorteImagem open={openModalRecorte} OpenClose={OpenModalRecorte} imagemParaRecorte={imagemMergeFinal} SalavrImagemRecortada={SalavrImagemRecortada} temaRedeSocial={temaRedeSocial} />
+                <ModalRecorteImagem open={openModalRecorte} OpenClose={OpenModalRecorte} imagemParaRecorte={imagemMergeFinal} SalvarImagemRecortada={SalvarImagemRecortada} temaRedeSocial={temaRedeSocial} />
             </Container>
 
         </Modal >

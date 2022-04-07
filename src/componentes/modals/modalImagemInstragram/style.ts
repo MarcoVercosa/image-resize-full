@@ -42,13 +42,11 @@ export const Header = styled.header`
         display: flex;
         justify-content:space-around;
         align-items: center;
-        //margin-top: 15px;       
-        font-family: 'Oswald', sans-serif;
-      
-
+        //margin-top: 15px;  
         h1{
 
             font-size: 40px;
+            font-family: 'Oswald', sans-serif;
             color: ${(props: any) => props.temaRedeSocial};
             margin: 0px;
             
@@ -182,7 +180,8 @@ export const EdicaoImagem = styled.main`
             /* width: auto;
             height: auto */
             max-width: 100%;
-            margin-left: 5px
+            margin-left: 5px;
+            border-radius: 5px
    
         }
     }

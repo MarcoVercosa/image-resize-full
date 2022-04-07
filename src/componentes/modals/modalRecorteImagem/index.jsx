@@ -10,29 +10,11 @@ import mergeImagesV2 from 'merge-images-v2'
 
 import RecortarImagem from './recorteImagem'
 
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '70vw',
-    height: "80vh",
-    //heigth: "100px",
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    borderRadius: 7,
-    p: 4,
-
-
-};
 const Input = styled('input')({
     display: 'none',
 });
 
-
-
-function ModalRecorteImagem({ open, OpenClose, imagemParaRecorte, SalavrImagemRecortada }) {
+function ModalRecorteImagem({ open, OpenClose, imagemParaRecorte, SalvarImagemRecortada, temaRedeSocial }) {
 
     const [crop, setCrop] = useState({ x: 0, y: 0 })
     const [zoom, setZoom] = useState(1)
@@ -43,30 +25,23 @@ function ModalRecorteImagem({ open, OpenClose, imagemParaRecorte, SalavrImagemRe
     let ImagemASerRecortada = imagemParaRecorte
 
     const onCropComplete = (croppedArea, croppedAreaPixels) => {
-        console.log(croppedArea, croppedAreaPixels)
-        // setWidth(croppedAreaPixels.width)
-        // setHeight(croppedAreaPixels.height)
-
         setCroppedAreaPixels(croppedAreaPixels)
     }
 
     async function Finalizar() {
-
         try {
             const croppedImage = await RecortarImagem(
                 ImagemASerRecortada,
                 croppedAreaPixels,
                 rotation
             )
-            console.log('donee', { croppedImage })
-            SalavrImagemRecortada(croppedImage)
+            SalvarImagemRecortada(croppedImage)
             OpenClose()
         } catch (e) {
             console.error(e)
         }
     }
     return (
-
         <Modal
             open={open}
             onClose={OpenClose}
@@ -74,7 +49,6 @@ function ModalRecorteImagem({ open, OpenClose, imagemParaRecorte, SalavrImagemRe
             aria-describedby="modal-modal-description"
         >
             <div
-
                 style={{
                     position: "absolute",
                     top: "50%",
@@ -115,27 +89,23 @@ function ModalRecorteImagem({ open, OpenClose, imagemParaRecorte, SalavrImagemRe
                 </div>
                 <AdicionarEnviarBotoes>
                     <div>
-
                         <Button variant="contained" component="span"
+                            style={{ backgroundColor: temaRedeSocial }}
                             onClick={Finalizar}
                         >
                             Recortar
                         </Button>
 
                         <Button variant="contained" component="span"
+                            style={{ backgroundColor: temaRedeSocial, color: "white" }}
                             onClick={OpenClose}
                         >
                             Cancelar
                         </Button>
                     </div>
                 </AdicionarEnviarBotoes>
-
             </div>
-
-            {/* </Box> */}
         </Modal >
-
     );
 }
-
 export { ModalRecorteImagem }
