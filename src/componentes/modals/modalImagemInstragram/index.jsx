@@ -167,7 +167,7 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
             alert("Necessário selecionar o frame")
         }
         if (houveRecorte) {
-            alert("Após o recorte da imagem a opção de Mover fica desabilitada para a manter a qualidade da imagem")
+            alert("Após o recorte da imagem a opção de Mover fica desabilitada para a manter a qualidade da imagem !!! ")
         }
         setMovimentarImagem(prevState => { return { ...prevState, [propriedade]: Number(value) } })
         let dados = movimentarImagem
@@ -239,6 +239,7 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
             setImagemFundo("")
             setImagemMergeFinal("")
             setHouveRecorte(false)
+            setOpenMenu(false)
         }
         return
     }
