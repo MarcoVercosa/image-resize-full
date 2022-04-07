@@ -165,9 +165,11 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
     async function MovimentarImagem(value, propriedade) {
         if (!imagemFrame) {
             alert("Necessário selecionar o frame")
+            return
         }
         if (houveRecorte) {
             alert("Após o recorte da imagem a opção de Mover fica desabilitada para a manter a qualidade da imagem !!! ")
+            return
         }
         setMovimentarImagem(prevState => { return { ...prevState, [propriedade]: Number(value) } })
         let dados = movimentarImagem
@@ -182,10 +184,9 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
     async function AlterarDimensaoManual() {
         let imagem = await AlterarDimensaoImagem(aspecto.width, aspecto.height, imagemMergeFinal)
         setImagemMergeFinal(imagem)
-        console.log(aspecto)
     }
 
-    function Filtro(value, propriedade, valueFilter) {
+    async function Filtro(value, propriedade, valueFilter) {
         setFiltros(prevState => { return { ...prevState, [propriedade]: value, selecionado: propriedade } })
 
         if (propriedade == "original") {
@@ -195,9 +196,10 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                 sepia: "0",
                 inverter: "0",
                 blur: "0",
-                brilho: "0"
+                brilho: "1"
             })
-            setImagemMergeFinal(imagemMergeOriginal)
+            let imagem = await AlterarDimensaoImagem(aspecto.width, aspecto.height, imagemMergeOriginal)//volta o tamanho para os aspectos atuais selecionados
+            setImagemMergeFinal(imagem)
             return
         }
 
