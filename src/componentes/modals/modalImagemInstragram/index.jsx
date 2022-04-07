@@ -185,10 +185,8 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         let imagem = await AlterarDimensaoImagem(aspecto.width, aspecto.height, imagemMergeFinal)
         setImagemMergeFinal(imagem)
     }
-
     async function Filtro(value, propriedade, valueFilter) {
         setFiltros(prevState => { return { ...prevState, [propriedade]: value, selecionado: propriedade } })
-
         if (propriedade == "original") {
             setFiltros({
                 contraste: "1",
