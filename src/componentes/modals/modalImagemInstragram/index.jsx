@@ -153,19 +153,10 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         let dados = movimentarImagem
         dados = { ...dados, [propriedade]: Number(value) }
         let resultado = await MoverImagensEOpacidade(imagemFundo, imagemFrame, dados)//movimenta a imagem
-        fetch(resultado)
-            .then(res => res.blob())//transforma em blob
-            .then(blob => {
-                //setImagemFundoOriginal(blob) // pega a imagem BLOB para a func Alterar Aspecto se basear na imagem recortada
-                //const file = new File([blob], "filemovimentar", { type: "image/png" })//transforma em aquivo
-                //IdentificaDimensoesImagem(file).then(({ width, height }) => {
-                //setAspecto({ width, height, nome: `Outros: ${width}x${height}px` }) //pega a nova dimenção e armazena
-                AlterarDimensaoImagem(aspecto.width, aspecto.height, resultado).then(data => {//Adiciona o tamanho e largura configurados anteriormente na nova movimentação
-                    setImagemMergeOriginal(data)
-                    setImagemMergeFinal(data)
-                })
-                //})
-            })
+        AlterarDimensaoImagem(aspecto.width, aspecto.height, resultado).then(data => {//Adiciona o tamanho e largura configurados anteriormente na nova movimentação
+            setImagemMergeOriginal(data)
+            setImagemMergeFinal(data)
+        })
     }
 
     async function AlterarDimensaoManual() {
@@ -195,15 +186,22 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         function gray(imgObj) {
             var canvas = document.createElement('canvas');
             var canvasContext = canvas.getContext('2d');
-
             var imgW = imgObj[0].width;
             var imgH = imgObj[0].height;
             canvas.width = imgW;
             canvas.height = imgH;
-
             canvasContext.filter = valueFilter;
             canvasContext.drawImage(imgObj[0], 0, 0, imgObj[0].width, imgObj[0].height)
-            setImagemMergeFinal(canvas.toDataURL())
+            //setImagemMergeFinal(canvas.toDataURL())
+
+
+
+            AlterarDimensaoImagem(aspecto.width, aspecto.height, canvas.toDataURL()).then(data => {//Adiciona o tamanho e largura configurados anteriormente na nova movimentação
+                setImagemMergeFinal(data)
+            })
+
+
+
         }
         gray(imgObj);
     }

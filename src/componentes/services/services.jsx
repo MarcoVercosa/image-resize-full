@@ -3,7 +3,6 @@ import mergeImagesV2 from 'merge-images-v2'
 
 
 export async function IdentificaDimensoesImagem(imagem) {
-    //console.log(imagem.target.files[0])
     const promise = new Promise((resolve) => {
         var reader = new FileReader();
         //Read the contents of Image File.
@@ -15,7 +14,6 @@ export async function IdentificaDimensoesImagem(imagem) {
             image.onload = function () {
                 var height = this.height;
                 var width = this.width;
-                console.log(width, height)
                 resolve({ width, height })
             };
             //Set the Base64 string return from FileReader as source.

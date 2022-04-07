@@ -22,8 +22,6 @@ function ModalInstragramFrame({ open, OpenClose, FrameSelecionado, temaRedeSocia
     const [imagemFrameSelecionado, setImagemFrameSelecionado] = useState<any>("")
 
     function SelecionaFrame(imagem: any) {
-        console.log(imagem.target.files[0])
-        console.log(typeof (imagem.target.files[0]))
         setImagemFrameSelecionado(imagem.target.files[0])
     }
 
