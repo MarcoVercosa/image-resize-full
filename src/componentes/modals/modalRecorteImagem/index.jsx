@@ -97,7 +97,7 @@ function ModalRecorteImagem({ open, OpenClose, imagemParaRecorte, SalvarImagemRe
                         </Button>
 
                         <Button variant="contained" component="span"
-                            style={{ backgroundColor: temaRedeSocial, color: "white" }}
+                            style={{ backgroundColor: temaRedeSocial }}
                             onClick={OpenClose}
                         >
                             Cancelar

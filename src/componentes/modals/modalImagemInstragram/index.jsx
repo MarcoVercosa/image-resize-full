@@ -208,10 +208,13 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         gray(imgObj);
     }
     function FecharModalEdicao() {
-        var resposta = (window.confirm("Deseja realmente sair ? "))
+        var resposta = (window.confirm("Deseja realmente sair ?"))
         if (resposta) {
             setOpenMenu(false)
-            Reset()
+            setImagemFrame("")
+            setImagemFrameOriginal("")
+            setImagemFundo("")
+            setImagemMergeFinal("")
             OpenClose()
         }
         return
@@ -532,7 +535,8 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                             component="span"
                             disabled={!imagemMergeFinal}
                         >
-                            <a download="teste.png" href={imagemMergeFinal}> Enviar foto</a>
+                            <a download="teste.png" href={imagemMergeFinal}
+                            > Enviar foto</a>
                         </Button>
 
                     </div>
