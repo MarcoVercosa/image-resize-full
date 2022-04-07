@@ -62,13 +62,15 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
     })
 
     async function SalvarImagemRecortada(imagemRecortada) {
+
+
         fetch(imagemRecortada)
             .then(res => res.blob())//transforma em blob
             .then(blob => {
-                setImagemFundoOriginal(blob) // pega a imagem BLOB para a func Alterar Aspecto se basear na imagem recortada
+                //setImagemFundoOriginal(blob) // pega a imagem BLOB para a func Alterar Aspecto se basear na imagem recortada
                 const file = new File([blob], "File name", { type: "image/png" })//transforma em aquivo
-                //IdentificaDimensoesImagem(file).then(({ width, height }) => console.log(width, height)) //pega a nova dimenção e armazena
                 IdentificaDimensoesImagem(file).then(({ width, height }) => setAspecto({ width, height, nome: `Outros: ${width}x${height}px` })) //pega a nova dimenção e armazena
+                BlobParaBase64(blob).then(data => setImagemFundoOriginal(data)) // altera o blob para base64  e armazena para a func Alterar Aspecto se basear na imagem recortada
 
             })
         setImagemMergeFinal(imagemRecortada)//para ser renderizada a nova imagem recortada
@@ -78,10 +80,6 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         setOpenModalFrames(!openModalFrames)
     }
     function OpenModalRecorte() {
-        // if (!imagemFrameOriginal) {
-        //     alert("Selecione uma imagem e um frame primeiro")
-        //     return
-        // }
         setOpenModalRecorte(!openModalRecorte)
     }
 
@@ -129,6 +127,9 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
         // Altera o aspecto apenas a imagem de fundo setOriginal
         // Se houver: Padronize as 2 com o mesmo tamanho solicitado e faz o merge
         if (!imagemFrameOriginal) {
+            console.log(imagemFundoOriginal)
+            console.log(typeof (imagemFundoOriginal))
+
             try {
                 const imageFinal = await AlterarDimensaoImagem(width, height, imagemFundoOriginal)
                 setImagemFundo(imageFinal)
@@ -226,15 +227,9 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
             setImagemFrameOriginal("")
             setImagemFundo("")
             setImagemMergeFinal(imagemFundoOriginal)
-            setOpenMenu(false)
         }
         return
     }
-
-    function EnviarFoto() {
-
-    }
-
     return (
 
         <Modal
@@ -254,7 +249,7 @@ function ModalInstragram({ open, OpenClose, temaRedeSocial }) {
                             style={{ backgroundColor: openMenu ? temaRedeSocial : "#b5afa7", color: "white", height: "50px" }}
                             component="span" size='small'
                             onClick={() => setOpenMenu(!openMenu)}
-                            disabled={!imagemFundo}
+                            disabled={!imagemFundoOriginal}
 
                         >
                             Menu
