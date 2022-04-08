@@ -2,15 +2,6 @@ import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Modal from '@mui/material/Modal';
-import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import FormGroup from '@mui/material/FormGroup';
-import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
-import HeightIcon from '@mui/icons-material/Height';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 import { ModalInstragramFrame } from '../modalSelectFrame';
 import { ModalRecorteImagem } from '../modalRecorteImagem';
@@ -22,9 +13,6 @@ import { AspectoBotoes } from '../../aspectoBotoes';
 import { Menu } from "../../menu/index"
 import { AdicionarEnviar } from "../../adicionarEnviarBotoes/index"
 
-const Input = styled('input')({
-    display: 'none',
-});
 
 function ModalRedeSocial({ open, OpenClose, temaRedeSocial }: IModalInstragram): JSX.Element {
     const [openModalFrames, setOpenModalFrames] = useState<boolean>(false)
