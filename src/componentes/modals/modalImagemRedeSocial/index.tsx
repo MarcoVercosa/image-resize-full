@@ -14,11 +14,13 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 import { ModalInstragramFrame } from '../modalSelectFrame';
 import { ModalRecorteImagem } from '../modalRecorteImagem';
-import { Container, Header, AspectoImagem, Menu, Mensagem, AdicionarEnviarBotoes, EdicaoImagem, FecharMenu } from "./style"
+import { Container, Header, Mensagem, EdicaoImagem } from "./style"
 import { BlobParaBase64, AlteraFiltro, ImagemFileParaBase64, AlterarDimensaoImagem, MoverImagensEOpacidade, IdentificaDimensoesImagem, MergeImagens } from '../../../utils/imagemManager/services';
 import { IModalInstragram, IAspecto, IMovimentarImagem, IFiltros } from "../../../types/index"
 
 import { AspectoBotoes } from '../../aspectoBotoes';
+import { Menu } from "../../menu/index"
+import { AdicionarEnviar } from "../../adicionarEnviarBotoes/index"
 
 const Input = styled('input')({
     display: 'none',
@@ -225,8 +227,7 @@ function ModalRedeSocial({ open, OpenClose, temaRedeSocial }: IModalInstragram):
             aria-describedby="modal-modal-description"
         >
 
-            <Container temaRedeSocial={temaRedeSocial}
-            >
+            <Container temaRedeSocial={temaRedeSocial}>
                 <Header temaRedeSocial={temaRedeSocial}>
                     <div>
                         <h1>Editar foto</h1>
@@ -235,198 +236,32 @@ function ModalRedeSocial({ open, OpenClose, temaRedeSocial }: IModalInstragram):
                             component="span" size='small'
                             onClick={() => setOpenMenu(!openMenu)}
                             disabled={!imagemFundoOriginal}
-
                         >
                             Menu
                         </Button>
                     </div>
                 </Header>
 
-                <AspectoBotoes aspecto={aspecto} AlteraAspecto={AlteraAspecto} temaRedeSocial={temaRedeSocial} />
-                <Menu temaRedeSocial={temaRedeSocial} style={{ display: openMenu ? "block" : "none" }}>
-                    <div>
-                        <FecharMenu onClick={() => setOpenMenu(!openMenu)}>
-                            <ExitToAppIcon sx={{ fontSize: 40 }} />
-                        </FecharMenu>
-
-                        <div style={{ display: 'flex', justifyContent: "space-between" }}>
-                            <p>Mover FRAME</p>
-
-                        </div>
-
-                        <div>
-                            <TextField
-                                id="outlined-number" label={<CompareArrowsIcon sx={{ fontSize: 50 }} style={{ color: temaRedeSocial }} />}
-                                type="number" value={movimentarImagem.XFrame}
-                                onChange={(data) => MovimentarImagem(data.target.value, "XFrame")}
-                            />
-                        </div>
-                        <div>
-                            <TextField
-                                id="outlined-number" label={<HeightIcon sx={{ fontSize: 40 }} style={{ color: temaRedeSocial }} />}
-                                type="number" value={movimentarImagem.YFrame}
-                                onChange={(data) => MovimentarImagem(data.target.value, "YFrame")}
-                            />
-                        </div>
-                        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                            <InputLabel id="demo-simple-select-standard-label">Opacidade</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-standard-label"
-                                id="demo-simple-select-standard"
-                                value={movimentarImagem.opacityFrame}
-                                onChange={(data) => MovimentarImagem(String(data.target.value), "opacityFrame")}
-                                label="OpacidadeFrame"
-                            >
-                                <MenuItem value={0.0}>0.0</MenuItem>
-                                <MenuItem value={0.1}>0.1</MenuItem>
-                                <MenuItem value={0.2}>0.2</MenuItem>
-                                <MenuItem value={0.3}>0.3</MenuItem>
-                                <MenuItem value={0.4}>0.4</MenuItem>
-                                <MenuItem value={0.5}>0.5</MenuItem>
-                                <MenuItem value={0.6}>0.6</MenuItem>
-                                <MenuItem value={0.7}>0.7</MenuItem>
-                                <MenuItem value={0.8}>0.8</MenuItem>
-                                <MenuItem value={0.9}>0.9</MenuItem>
-                                <MenuItem value={1}>1</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <div>
-                            <p>Mover IMAGEM</p>
-                            <div>
-                                <TextField
-                                    id="outlined-number" label={<CompareArrowsIcon sx={{ fontSize: 50 }} style={{ color: temaRedeSocial }} />}
-                                    type="number" value={movimentarImagem.XImagem}
-                                    onChange={(data) => MovimentarImagem(data.target.value, "XImagem")}
-                                />
-                            </div>
-                            <div>
-                                <TextField
-                                    id="outlined-number" label={<HeightIcon sx={{ fontSize: 40 }} style={{ color: temaRedeSocial }} />}
-                                    type="number" value={movimentarImagem.YImagem}
-                                    onChange={(data) => MovimentarImagem(data.target.value, "YImagem")}
-                                />
-                            </div>
-                            <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                                <InputLabel id="demo-simple-select-standard-label">Opacidade</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-standard-label"
-                                    id="demo-simple-select-standard"
-                                    value={movimentarImagem.opacityImagem}
-                                    onChange={(data) => MovimentarImagem(String(data.target.value), "opacityImagem")}
-                                    label="OpacidadeFrame"
-                                >
-                                    <MenuItem value={0.0}>0.0</MenuItem>
-                                    <MenuItem value={0.1}>0.1</MenuItem>
-                                    <MenuItem value={0.2}>0.2</MenuItem>
-                                    <MenuItem value={0.3}>0.3</MenuItem>
-                                    <MenuItem value={0.4}>0.4</MenuItem>
-                                    <MenuItem value={0.5}>0.5</MenuItem>
-                                    <MenuItem value={0.6}>0.6</MenuItem>
-                                    <MenuItem value={0.7}>0.7</MenuItem>
-                                    <MenuItem value={0.8}>0.8</MenuItem>
-                                    <MenuItem value={0.9}>0.9</MenuItem>
-                                    <MenuItem value={1}>1</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <p>PIXELS:
-                                <Button
-                                    style={{ backgroundColor: temaRedeSocial, color: "white", marginLeft: "40%" }}
-                                    component="span"
-                                    onClick={() => { AlterarDimensaoManual() }}
-                                >
-                                    ALTERAR
-                                </Button>
-                            </p>
-
-                            <div>
-                                <TextField
-                                    id="outlined-number" label={<CompareArrowsIcon sx={{ fontSize: 40 }} style={{ color: temaRedeSocial }} />}
-                                    type="number" value={aspecto.width}
-                                    onChange={(data) => setAspecto(prevState => { return { ...prevState, width: Number(data.target.value), nome: `Outros: ${data.target.value} - ${prevState.height}px` } })}
-                                />
-                                <TextField
-                                    id="outlined-number" label={<HeightIcon sx={{ fontSize: 40 }} style={{ color: temaRedeSocial }} />} type="number" value={aspecto.height}
-                                    onChange={(data) => setAspecto(prevState => { return { ...prevState, height: Number(data.target.value), nome: `Outros: ${prevState.width} - ${data.target.value}px` } })}
-                                />
-                            </div>
-                            <div>
-                                <Button
-                                    style={{ backgroundColor: temaRedeSocial, color: "white" }}
-                                    component="span"
-                                    onClick={() => { OpenModalRecorte() }}
-                                    disabled={!imagemFundo}
-                                >
-                                    Recortar
-                                </Button>
-                            </div>
-                            <div>
-                                <Button
-                                    style={{ backgroundColor: temaRedeSocial, color: "white" }}
-                                    component="span"
-                                    onClick={() => { Reset() }}
-                                    disabled={!imagemFundo}
-                                >
-                                    Reset
-                                </Button>
-                            </div>
-                            <div>
-                                <FormGroup>
-                                    <p>FILTROS</p>
-                                    <TextField
-                                        id="outlined-number" label="CONTRASTE"
-                                        onChange={(event) => Filtro(event.target.value, "contraste", `contrast(${event.target.value})`)}
-                                        inputProps={{ min: "0", max: "100", step: "1" }}
-                                        type="number"
-                                        value={filtros.contraste}
-                                    />
-
-                                    <TextField
-                                        id="outlined-number" label="GRAYSCALE"
-                                        onChange={(event) => Filtro(event.target.value, "grayscale", `grayscale(${event.target.value})`)}
-                                        inputProps={{ min: "0", max: "1", step: "1" }}
-                                        type="number"
-                                        value={filtros.grayscale}
-                                    />
-                                    <TextField
-                                        id="outlined-number" label="SEPIA"
-                                        onChange={(event) => Filtro(event.target.value, "sepia", `sepia(${event.target.value})`)}
-                                        inputProps={{ min: "0.0", max: "1", step: ".1" }}
-                                        type="number"
-                                        value={filtros.sepia}
-                                    />
-                                    <TextField
-                                        id="outlined-number" label="BLUR"
-                                        onChange={(event) => Filtro(event.target.value, "blur", `blur(${event.target.value}px)`)}
-                                        inputProps={{ min: "0", max: "10", step: "1" }}
-                                        type="number"
-                                        value={filtros.blur}
-                                    />
-                                    <TextField
-                                        id="outlined-number" label="INVERTER"
-                                        onChange={(event) => Filtro(event.target.value, "inverter", `invert(${event.target.value})`)}
-                                        inputProps={{ min: "0.0", max: "1", step: ".1" }}
-                                        type="number"
-                                        value={filtros.inverter}
-                                    />
-                                    <TextField
-                                        id="outlined-number" label="BRILHO"
-                                        onChange={(event) => Filtro(event.target.value, "brilho", `brightness(${event.target.value})`)}
-                                        inputProps={{ min: "0.0", max: "3", step: ".1" }}
-                                        type="number"
-                                        value={filtros.brilho}
-                                    />
-                                    <Button
-                                        style={{ backgroundColor: temaRedeSocial, color: "white", marginLeft: "40%", marginTop: "6%" }}
-                                        component="span"
-                                        onClick={(_: any) => Filtro(_, "original", "original")}
-                                    >Reset Cores
-
-                                    </Button>
-                                </FormGroup>
-                            </div>
-                        </div>
-                    </div>
-                </Menu>
+                <AspectoBotoes
+                    aspecto={aspecto}
+                    AlteraAspecto={AlteraAspecto}
+                    temaRedeSocial={temaRedeSocial}
+                />
+                <Menu
+                    openMenu={openMenu}
+                    setOpenMenu={setOpenMenu}
+                    temaRedeSocial={temaRedeSocial}
+                    movimentarImagem={movimentarImagem}
+                    MovimentarImagem={MovimentarImagem}
+                    AlterarDimensaoManual={AlterarDimensaoManual}
+                    aspecto={aspecto}
+                    setAspecto={setAspecto}
+                    OpenModalRecorte={OpenModalRecorte}
+                    imagemFundo={imagemFundo}
+                    Reset={Reset}
+                    Filtro={Filtro}
+                    filtros={filtros}
+                />
                 <Mensagem temaRedeSocial={temaRedeSocial}>
                     <div>
                         {!imagemFundo &&
@@ -449,37 +284,13 @@ function ModalRedeSocial({ open, OpenClose, temaRedeSocial }: IModalInstragram):
                         </>
                     }
                 </EdicaoImagem>
-                <AdicionarEnviarBotoes>
-                    <div>
-                        <label htmlFor="contained-button-file">
-                            <Input accept="image/*" id="contained-button-file" multiple={false} type="file"
-                                onChange={(event) => AdicionaImagemFundo(event)}
-                            />
-                            <Button
-                                style={{ color: temaRedeSocial, border: "1px solid", borderColor: temaRedeSocial }}
-                                variant="outlined" component="span">
-                                Adicionar foto
-                            </Button>
-                        </label>
-                        <Button variant="outlined"
-                            style={{ color: temaRedeSocial, border: "1px  solid", borderColor: temaRedeSocial }}
-                            component="span"
-                            onClick={() => OpenModalFrameSelecionar()}
-                            disabled={imagemMergeFinal ? false : true}
-                        >
-                            Adicionar Frame
-                        </Button>
-                        <Button
-                            style={{ backgroundColor: temaRedeSocial, color: "white" }}
-                            component="span"
-                            disabled={!imagemMergeFinal}
-                        >
-                            <a download="RedeSocial.png" href={imagemMergeFinal}
-                            > Enviar foto</a>
-                        </Button>
 
-                    </div>
-                </AdicionarEnviarBotoes>
+                <AdicionarEnviar
+                    AdicionaImagemFundo={AdicionaImagemFundo}
+                    temaRedeSocial={temaRedeSocial}
+                    OpenModalFrameSelecionar={OpenModalFrameSelecionar}
+                    imagemMergeFinal={imagemMergeFinal}
+                />
                 <ModalInstragramFrame open={openModalFrames} OpenClose={OpenModalFrameSelecionar} FrameSelecionado={AdicionaImagemFrame} temaRedeSocial={temaRedeSocial} />
                 <ModalRecorteImagem open={openModalRecorte} OpenClose={OpenModalRecorte} imagemParaRecorte={imagemMergeFinal} SalvarImagemRecortada={SalvarImagemRecortada} temaRedeSocial={temaRedeSocial} />
             </Container>

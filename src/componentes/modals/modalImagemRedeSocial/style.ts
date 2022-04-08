@@ -54,84 +54,6 @@ export const Header: any = styled.header`
     }
 
 `
-// export const AspectoImagem: any = styled.main`
-
-//     div{
-//         display: flex;
-//         justify-content: center;
-//         align-items: center;
-//         align-self:center;  
-//         gap:10px  
-//     }
-
-//     p{
-//         text-align: center;
-//         font-family: 'Oswald', sans-serif;
-//         font-size: 35px;
-//         color: ${(props: any) => props.temaRedeSocial}
-
-//     }
-// `
-
-export const Menu: any = styled.div`
-    position: fixed; 
-    top: 70%;
-    left: 1%;
-    background-color:#f9f9f9;
-    padding: 10px;
-    border-radius: 10px;
-    border: 2px grey solid;
-    z-index: 100;
-    opacity: 0.2;
-    transition: all 1s;
-    height: 80vh;
-    overflow: scroll;
-    scrollbar-width: thin;
-    /* "auto" or "thin" */
-    scrollbar-color: blue orange;
-    /* scroll thumb and track */
-  
-    ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-
-    ::-webkit-scrollbar-thumb:vertical {
-    background-color: ${(props: any) => props.temaRedeSocial};
-    border-radius: 20px;
-}
-
-    &:hover{
-        opacity:1;
-    }
-    div{
-        display: flex;
-    flex-direction: column;
-        div{
-            margin-top: 10px;
-            p{
-                font-family: 'Oswald', sans-serif;
-                font-size: 20px;
-                word-spacing: 1px;
-                line-height: 5px;
-            }
-        }
-
-    }
-
-`
-export const FecharMenu = styled.p`
-    cursor: pointer;
-    font-size: 40px;
-    margin: 0 auto; 
-    padding: 5px;
-    transition: all 1s;
-  
-    &:hover{
-          color:red;
-    }
-
-`
 
 export const Mensagem: any = styled.article`
 display: flex;
@@ -184,18 +106,6 @@ export const EdicaoImagem = styled.main`
             border-radius: 5px
    
         }
-    }
-
-`
-export const AdicionarEnviarBotoes = styled.main`
-        margin-top: 100px;
-        position:fixed;
-    div{
-        position:fixed;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        gap:40px;        
     }
 
 `
