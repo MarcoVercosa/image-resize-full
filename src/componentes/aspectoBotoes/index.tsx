@@ -12,7 +12,6 @@ interface IAspectoBotoes {
 
 export function AspectoBotoes({ aspecto, AlteraAspecto, temaRedeSocial }: IAspectoBotoes): JSX.Element {
 
-
     return (
         <AspectoImagem temaRedeSocial={temaRedeSocial} >
             <p>Selecione o aspecto: {aspecto.nome}</p>
