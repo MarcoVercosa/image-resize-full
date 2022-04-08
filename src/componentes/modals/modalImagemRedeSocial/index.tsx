@@ -12,7 +12,7 @@ import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import HeightIcon from '@mui/icons-material/Height';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
-import { ModalInstragramFrame } from '../modalSelectFrameInstagram';
+import { ModalInstragramFrame } from '../modalSelectFrame';
 import { ModalRecorteImagem } from '../modalRecorteImagem';
 import { Container, Header, AspectoImagem, Menu, Mensagem, AdicionarEnviarBotoes, EdicaoImagem, FecharMenu } from "./style"
 import { BlobParaBase64, AlteraFiltro, ImagemFileParaBase64, AlterarDimensaoImagem, MoverImagensEOpacidade, IdentificaDimensoesImagem, MergeImagens } from '../../../utils/imagemManager/services';

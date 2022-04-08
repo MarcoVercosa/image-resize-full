@@ -72,13 +72,13 @@ export const EdicaoImagem = styled.main`
 
 `
 export const AdicionarEnviarBotoes = styled.main`
-        margin-top: 40%;
+        //margin-top: 40%;
     div{
         width: 100%;
         display: flex;
         justify-content: center;
         gap:40px;
-        opacity: 0.2;
+        opacity: 0.3;
         transition: all 1s;      
         &:hover{
         opacity:1;
