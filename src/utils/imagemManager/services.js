@@ -83,20 +83,21 @@ export const MoverImagensEOpacidade = (imagemFundo, imagemFrame, dados) =>
         })
     })
 
-export function AlteraFiltro(imagemMergeOriginal, valorFiltro) {
-    function Filtro(imgObj) {
+export async function AlteraFiltro(imagemMergeOriginal, valorFiltro) {
+    async function Filtro(imgObj) {
+        console.log(imgObj[0].src)
         var canvas = document.createElement('canvas');
-        var canvasContext = canvas.getContext('2d');
-        var imgW = imgObj[0].width;
-        var imgH = imgObj[0].height;
+        var canvasContext =  canvas.getContext('2d');
+        var imgW = await imgObj[0].width;
+        var imgH = await imgObj[0].height;
         canvas.width = imgW;
         canvas.height = imgH;
-        canvasContext.filter = valorFiltro;
-        canvasContext.drawImage(imgObj[0], 0, 0, imgObj[0].width, imgObj[0].height)
+        canvasContext.filter = await valorFiltro;
+        canvasContext.drawImage(await imgObj[0], 0, 0, await imgObj[0].width, await imgObj[0].height)
         return canvas.toDataURL()
     }
     var imgObj = document.getElementsByClassName('imagemFinal');
-    imgObj[0].src = imagemMergeOriginal
+    imgObj[0].src = await imagemMergeOriginal
 
     return new Promise((resolve) =>
         resolve(Filtro(imgObj))
