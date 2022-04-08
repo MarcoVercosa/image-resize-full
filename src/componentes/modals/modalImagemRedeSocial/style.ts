@@ -1,7 +1,7 @@
 import styled from "styled-components"
 
 
-export const Container = styled.div`
+export const Container: any = styled.div`
     position: absolute;
     top: 50%;
     left: 50%;
@@ -34,7 +34,7 @@ export const Container = styled.div`
 
 `
 
-export const Header = styled.header`
+export const Header: any = styled.header`
     width:90vw;
     margin: 0;
 
@@ -54,7 +54,7 @@ export const Header = styled.header`
     }
 
 `
-export const AspectoImagem = styled.main`
+export const AspectoImagem: any = styled.main`
       
     div{
         display: flex;
@@ -73,7 +73,7 @@ export const AspectoImagem = styled.main`
     }
 `
 
-export const Menu = styled.div`
+export const Menu: any = styled.div`
     position: fixed; 
     top: 70%;
     left: 1%;
@@ -133,7 +133,7 @@ export const FecharMenu = styled.p`
 
 `
 
-export const Mensagem = styled.article`
+export const Mensagem: any = styled.article`
 display: flex;
     margin:0 auto;
     margin-top: 60px;

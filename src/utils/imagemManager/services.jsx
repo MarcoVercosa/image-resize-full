@@ -5,18 +5,19 @@ import mergeImagesV2 from 'merge-images-v2'
 export async function IdentificaDimensoesImagem(imagem) {
     const promise = new Promise((resolve) => {
         var reader = new FileReader();
-        //Read the contents of Image File.
+        //le o conteudo da imagem file
         reader.onload = function (e) {
 
-            //Initiate the JavaScript Image object.
+            //cria o obj Imgaem.
             var image = new Image();
-            //Validate the File Height and Width.
+
+            //ao carregar a imagem, pega altura  e largura
             image.onload = function () {
                 var height = this.height;
                 var width = this.width;
                 resolve({ width, height })
             };
-            //Set the Base64 string return from FileReader as source.
+            //conf para base64 string retorno do FIleReader como origem
             image.src = e.target.result;
             image.onerror = function (e) { console.log("Image failed!" + e); };
         };
@@ -35,7 +36,6 @@ export function MergeImagens(imagemMergeFinal, ImagemFrameRecebida) {
 export async function BlobParaBase64(imagemBlob) { // imagem blob
     return await blobToBase64(imagemBlob);
 }
-
 const blobToBase64 = (blob) => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(blob);
@@ -82,4 +82,24 @@ export const MoverImagensEOpacidade = (imagemFundo, imagemFrame, dados) =>
             resolve(b64)
         })
     })
+
+export function AlteraFiltro(imagemMergeOriginal, valorFiltro) {
+    function Filtro(imgObj) {
+        var canvas = document.createElement('canvas');
+        var canvasContext = canvas.getContext('2d');
+        var imgW = imgObj[0].width;
+        var imgH = imgObj[0].height;
+        canvas.width = imgW;
+        canvas.height = imgH;
+        canvasContext.filter = valorFiltro;
+        canvasContext.drawImage(imgObj[0], 0, 0, imgObj[0].width, imgObj[0].height)
+        return canvas.toDataURL()
+    }
+    var imgObj = document.getElementsByClassName('imagemFinal');
+    imgObj[0].src = imagemMergeOriginal
+
+    return new Promise((resolve) =>
+        resolve(Filtro(imgObj))
+    )
+}
 

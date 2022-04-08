@@ -2,22 +2,19 @@ import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import ImageInstagramIcon from "./assets/images/instagram.png"
 import ImageFaceBookIcon from "./assets/images/facebook.png"
-import { ModalInstragram } from './componentes/modals/modalImagemInstragram';
+import { ModalRedeSocial } from './componentes/modals/modalImagemRedeSocial';
 import { ContainerHead, ContainerDivButtons, ButtonInstagram } from "./style"
 
-function HomeImage() {
+function HomeImage(): JSX.Element {
 
-  const [openModalInstagram, setOpenModalInstagram] = useState<boolean>(false)
-  const [openModalFacebook, setOpenModalFacebook] = useState<boolean>(false)
+  const [openModalRedeSocial, setOpenModalRedeSocial] = useState<boolean>(false)
   const [temaRedeSocial, setTemaRedeSocial] = useState<string>("")
 
-  function OpenCloseModalInstagram(tema: string) {
+  function OpenCloseModalRedeSocial(tema: string): void {
     setTemaRedeSocial(tema)
-    setOpenModalInstagram(!openModalInstagram)
+    setOpenModalRedeSocial(!openModalRedeSocial)
   }
-
   return (
-
     <>
       <ContainerHead>
         <h1>Imagem para redes Sociais</h1>
@@ -26,21 +23,20 @@ function HomeImage() {
 
       <ContainerDivButtons>
         <Button variant="contained" style={{ backgroundColor: "#c13996" }}
-          onClick={() => OpenCloseModalInstagram("#c13996")}
+          onClick={() => OpenCloseModalRedeSocial("#c13996")}
         >
           <img src={ImageInstagramIcon} />
           Editar foto Instagram
         </Button>
         <Button variant="contained" style={{ backgroundColor: "#264eb0" }}
-          onClick={() => OpenCloseModalInstagram("#264eb0")}
+          onClick={() => OpenCloseModalRedeSocial("#264eb0")}
         >
           <img src={ImageFaceBookIcon} />
           Editar foto FaceBook
         </Button>
-        <ModalInstragram open={openModalInstagram} OpenClose={OpenCloseModalInstagram} temaRedeSocial={temaRedeSocial} />
+        <ModalRedeSocial open={openModalRedeSocial} OpenClose={OpenCloseModalRedeSocial} temaRedeSocial={temaRedeSocial} />
       </ContainerDivButtons>
     </>
   );
 }
-
 export { HomeImage }
