@@ -18,6 +18,8 @@ import { Container, Header, AspectoImagem, Menu, Mensagem, AdicionarEnviarBotoes
 import { BlobParaBase64, AlteraFiltro, ImagemFileParaBase64, AlterarDimensaoImagem, MoverImagensEOpacidade, IdentificaDimensoesImagem, MergeImagens } from '../../../utils/imagemManager/services';
 import { IModalInstragram, IAspecto, IMovimentarImagem, IFiltros } from "../../../types/index"
 
+import { AspectoBotoes } from '../../aspectoBotoes';
+
 const Input = styled('input')({
     display: 'none',
 });
@@ -93,7 +95,7 @@ function ModalRedeSocial({ open, OpenClose, temaRedeSocial }: IModalInstragram):
         setImagemMergeOriginal(resultado)
         setImagemMergeFinal(resultado)
     }
-    async function AlteraAspecto(width: number, height: number, nomeAspecto: string) {
+    async function AlteraAspecto(width: number, height: number, nomeAspecto: string): Promise<void> {
 
         if (!imagemFundoOriginal) {
             alert("Selecione primeiramente uma imagem")
@@ -239,7 +241,7 @@ function ModalRedeSocial({ open, OpenClose, temaRedeSocial }: IModalInstragram):
                         </Button>
                     </div>
                 </Header>
-                <AspectoImagem temaRedeSocial={temaRedeSocial}>
+                {/* <AspectoImagem temaRedeSocial={temaRedeSocial}>
                     <p>Selecione o aspecto: {aspecto.nome}</p>
                     <div>
                         <Button style={{ backgroundColor: aspecto.nome == "Horizontal - 1080x608" ? temaRedeSocial : "#b5afa7", color: "white" }}
@@ -257,7 +259,9 @@ function ModalRedeSocial({ open, OpenClose, temaRedeSocial }: IModalInstragram):
                             onClick={() => AlteraAspecto(500, 500, "Pequeno - 500x500")}
                         >500x500</Button>
                     </div>
-                </AspectoImagem>
+                </AspectoImagem> */}
+
+                <AspectoBotoes aspecto={aspecto} AlteraAspecto={AlteraAspecto} temaRedeSocial={temaRedeSocial} />
                 <Menu temaRedeSocial={temaRedeSocial} style={{ display: openMenu ? "block" : "none" }}>
                     <div>
                         <FecharMenu onClick={() => setOpenMenu(!openMenu)}>
